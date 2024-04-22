@@ -10,8 +10,8 @@ trait IKnockoutActions<TContractState> {
         blobert_a: u128,
         blobert_b: u128
     ) -> u128;
-    fn commit(self: @TContractState, combat_id: u128, hash: u64);
-    fn reveal(self: @TContractState, combat_id: u128, move: Move, salt: u64);
+    fn commit(self: @TContractState, combat_id: u128, hash: felt252);
+    fn reveal(self: @TContractState, combat_id: u128, move: Move, salt: felt252);
 }
 
 #[dojo::contract]
@@ -36,10 +36,10 @@ mod knockout_actions {
                 self.world_dispatcher.read(), player_a, player_b, blobert_a, blobert_b,
             )
         }
-        fn commit(self: @ContractState, combat_id: u128, hash: u64) {
+        fn commit(self: @ContractState, combat_id: u128, hash: felt252) {
             self.get_game(combat_id).commit_move(hash);
         }
-        fn reveal(self: @ContractState, combat_id: u128, move: Move, salt: u64) {
+        fn reveal(self: @ContractState, combat_id: u128, move: Move, salt: felt252) {
             self.get_game(combat_id).reveal_move(move, salt);
         }
     }

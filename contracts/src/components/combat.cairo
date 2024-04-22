@@ -35,23 +35,20 @@ impl MoveNImpl of MoveNTrait {
 }
 
 #[derive(Copy, Drop, Serde)]
-struct Reveal<T> {
+struct Reveal {
     move: Move,
-    salt: T,
+    salt: felt252,
 }
 
 #[generate_trait]
-impl RevealImpl<T, +Into<T, felt252>> of RevealTrait<T> {
-    fn create(move: Move, salt: T) -> Reveal<T> {
+impl RevealImpl of RevealTrait {
+    fn create(move: Move, salt: felt252) -> Reveal {
         Reveal { move, salt }
     }
-    fn get_hash(self: Reveal<T>) -> u64 {
-        (self.get_hash_felt252().into() & U64_MASK_U256).try_into().unwrap()
-    }
-    fn get_hash_felt252(self: Reveal<T>) -> felt252 {
+    fn get_hash(self: Reveal) -> felt252 {
         pedersen::pedersen(self.salt.into(), self.move.into())
     }
-    fn check_hash(self: Reveal<T>, hash: u64) -> bool {
+    fn check_hash(self: Reveal, hash: felt252) -> bool {
         self.get_hash() == hash
     }
 }
@@ -60,8 +57,8 @@ impl RevealImpl<T, +Into<T, felt252>> of RevealTrait<T> {
 struct TwoHashes {
     #[key]
     id: u128,
-    a: u64,
-    b: u64,
+    a: felt252,
+    b: felt252,
 }
 
 #[derive(Model, Copy, Drop, Print, Serde, SerdeLen)]
@@ -115,7 +112,7 @@ impl TwoMovesImpl of TwoMovesTrait {
 
 #[generate_trait]
 impl TwoHashesImpl of TwoHashesTrait {
-    fn get_hash(self: TwoHashes, player: AB) -> u64 {
+    fn get_hash(self: TwoHashes, player: AB) -> felt252 {
         let hash = match player {
             AB::A => self.a,
             AB::B => self.b,

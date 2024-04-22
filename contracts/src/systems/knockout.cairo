@@ -92,7 +92,7 @@ impl KnockoutGameImpl of KnockoutGameTrait {
         panic!("Player not part of combat");
         AB::A
     }
-    fn commit_move(self: KnockoutGame, hash: u64) {
+    fn commit_move(self: KnockoutGame, hash: felt252) {
         self.assert_running();
         let player = self.get_caller_player();
         let mut commitments = self.get_commitments();
@@ -109,7 +109,7 @@ impl KnockoutGameImpl of KnockoutGameTrait {
         set!(self.world, (commitments,));
     }
 
-    fn reveal_move<T, +Into<T, felt252>, +Drop<T>>(self: KnockoutGame, move: Move, salt: T) {
+    fn reveal_move(self: KnockoutGame, move: Move, salt: felt252) {
         let player = self.get_caller_player();
         let reveal = RevealTrait::create(move, salt);
         let mut commitments = self.get_commitments();

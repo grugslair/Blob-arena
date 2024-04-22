@@ -24,3 +24,6 @@ mod contracts {
 }
 mod constants;
 mod utils;
+mod tests{
+    mod tests;
+}
