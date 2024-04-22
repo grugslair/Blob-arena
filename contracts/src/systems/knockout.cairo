@@ -3,7 +3,8 @@ use blob_arena::components::combat::TwoMovesTrait;
 use blob_arena::{
     components::{
         blobert::{Blobert, BlobertTrait}, combat::{Move, TwoHashes, RevealTrait, TwoMoves},
-        world::World, knockout::{Knockout, Healths, HealthsTrait, RoundTrait}, utils::{AB, Status},
+        world::World, knockout::{Knockout, Healths, HealthsTrait, RoundTrait},
+        utils::{AB, Status, Winner}, stake::Stake,
     },
     systems::{blobert::{BlobertWorldTrait}, combat::{Outcome, calculate_damage, get_outcome}},
     utils::{uuid},
@@ -48,6 +49,18 @@ impl KnockoutGameImpl of KnockoutGameTrait {
             blobert_b: model.blobert_b,
         }
     }
+    fn get_blobert(self: KnockoutGame, player: AB) -> Blobert {
+        match player {
+            AB::A => self.world.get_blobert(self.blobert_a),
+            AB::B => self.world.get_blobert(self.blobert_b),
+        }
+    }
+    fn get_player_id(self: KnockoutGame, player: AB) -> ContractAddress {
+        match player {
+            AB::A => self.player_a,
+            AB::B => self.player_b,
+        }
+    }
     fn get_bloberts(self: KnockoutGame) -> (Blobert, Blobert) {
         (self.world.get_blobert(self.blobert_a), self.world.get_blobert(self.blobert_b))
     }
@@ -62,6 +75,10 @@ impl KnockoutGameImpl of KnockoutGameTrait {
     }
     fn get_moves(self: KnockoutGame) -> TwoMoves {
         get!(self.world, self.combat_id, TwoMoves)
+    }
+
+    fn get_stake(self: KnockoutGame) -> Stake {
+        get!(self.world, self.combat_id, Stake)
     }
 
     fn get_caller_player(self: KnockoutGame) -> AB {
@@ -99,7 +116,7 @@ impl KnockoutGameImpl of KnockoutGameTrait {
         let mut moves = self.get_moves();
 
         assert(!moves.check_set(player), 'Already revealed');
-        assert(reveal.check_hash(commitments.get_hash(player)), 'Hash dose not atch');
+        assert(reveal.check_hash(commitments.get_hash(player)), 'Hash dose not match');
 
         moves.set_move(player, move);
 
@@ -121,7 +138,29 @@ impl KnockoutGameImpl of KnockoutGameTrait {
         moves.reset();
         commitments.reset();
         healths.apply_damage(damage_a, damage_b);
+        if healths.a == 0 && healths.b == 0 {
+            healths.a = 1;
+            healths.b = 1;
+        };
         set!(self.world, (healths, commitments, moves, round));
+    }
+
+    fn end_game(self: KnockoutGame) {
+        let stake = self.get_stake();
+        let status = self.get_status();
+        let outcome = match status {
+            Status::Finished(outcome) => outcome,
+            Status::Running => panic!("Game not finished"),
+        };
+        if outcome != Winner::Draw {
+            let winner: AB = outcome.into();
+            if stake.blobert {
+                let mut blobert = self.get_blobert(!winner);
+                let player_id = self.get_player_id(winner.into());
+                self.world.transfer_blobert(ref blobert, player_id);
+            }
+            if stake.amount > 0 {}
+        }
     }
 
     fn get_status(self: KnockoutGame) -> Status {

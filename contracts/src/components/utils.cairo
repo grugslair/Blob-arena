@@ -16,3 +16,30 @@ enum Status {
     Finished: Winner,
 }
 
+impl WinnerIntoAB of Into<Winner, AB> {
+    fn into(self: Winner) -> AB {
+        match self {
+            Winner::A => AB::A,
+            Winner::B => AB::B,
+            Winner::Draw => panic!("Game is a draw"),
+        }
+    }
+}
+
+impl BitNotAB of BitNot<AB> {
+    fn bitnot(a: AB) -> AB {
+        match a {
+            AB::A => AB::B,
+            AB::B => AB::A,
+        }
+    }
+}
+impl NotAB of Not<AB> {
+    fn not(a: AB) -> AB {
+        match a {
+            AB::A => AB::B,
+            AB::B => AB::A,
+        }
+    }
+}
+

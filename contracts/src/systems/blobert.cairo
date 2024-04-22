@@ -3,7 +3,9 @@ use blob_arena::{
 };
 use dojo::world::{IWorldDispatcherTrait};
 use starknet::{ContractAddress};
-
+use openzeppelin::token::erc721::interface::{
+    IERC721, IERC721Dispatcher, IERC721DispatcherTrait, IERC721LibraryDispatcher
+};
 
 #[generate_trait]
 impl BlobertWorldImpl of BlobertWorldTrait {
@@ -19,5 +21,9 @@ impl BlobertWorldImpl of BlobertWorldTrait {
         let blobert: Blobert = get!(self, (blobert_id), Blobert);
         assert(blobert.owner.is_non_zero(), 'Blobert not found');
         blobert
+    }
+    fn transfer_blobert(self: World, ref blobert: Blobert, owner: ContractAddress) {
+        blobert.owner = owner;
+        set!(self, (blobert,));
     }
 }

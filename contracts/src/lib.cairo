@@ -10,6 +10,7 @@ mod components {
     mod utils;
     mod world;
     mod knockout;
+    mod stake;
 }
 mod systems {
     mod combat;

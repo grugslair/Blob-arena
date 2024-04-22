@@ -55,7 +55,17 @@ impl HealthsImpl of HealthsTrait {
         return self.a > 0 && self.b > 0;
     }
     fn apply_damage(ref self: Healths, damage_a: u8, damage_b: u8) {
-        self.a -= damage_a;
+        if damage_a > self.a {
+            self.a = 0;
+        } else {
+            self.a -= damage_a;
+        }
+        if damage_b > self.b {
+            self.b = 0;
+        } else {
+            self.b -= damage_b;
+        }
+
         self.b -= damage_b;
     }
     fn status(self: Healths) -> Status {
