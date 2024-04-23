@@ -65,8 +65,6 @@ impl HealthsImpl of HealthsTrait {
         } else {
             self.b -= damage_b;
         }
-
-        self.b -= damage_b;
     }
     fn status(self: Healths) -> Status {
         if self.a > 0 && self.b > 0 {

@@ -7,8 +7,8 @@ mod test {
     #[test]
     #[available_gas(3000000000)]
     fn test_combat() {
-        let stats_a = Stats { attack: 10, defense: 10, speed: 10, strength: 10, };
-        let stats_b = Stats { attack: 10, defense: 10, speed: 10, strength: 10, };
+        let stats_a = Stats { attack: 10, defense: 20, speed: 20, strength: 20, };
+        let stats_b = Stats { attack: 0, defense: 0, speed: 0, strength: 0, };
         let mut n: u8 = 1;
         loop {
             let move_a: Move = n.into();
