@@ -1,4 +1,4 @@
-use core::option::OptionTrait;
+use core::fmt::{Display, Formatter, Error};
 use starknet::ContractAddress;
 use blob_arena::{constants::U64_MASK_U256, components::utils::{AB, Status, Winner}};
 
@@ -31,6 +31,40 @@ impl MoveNImpl of MoveNTrait {
             MoveN::Rush => Move::Rush,
             MoveN::None => { panic!("Move not set") },
         }
+    }
+}
+
+
+impl MoveIntoByteArray of Into<Move, ByteArray> {
+    fn into(self: Move) -> ByteArray {
+        match self {
+            Move::Beat => "Beat",
+            Move::Counter => "Counter",
+            Move::Rush => "Rush",
+        }
+    }
+}
+
+impl TIntoMove<T, +TryInto<T, u8>> of Into<T, Move> {
+    fn into(self: T) -> Move {
+        match self.try_into().unwrap() {
+            0_u8 => panic!("Move id out of range"),
+            1_u8 => Move::Beat,
+            2_u8 => Move::Counter,
+            3_u8 => Move::Rush,
+            _ => panic!("Move id out of range"),
+        }
+    }
+}
+
+impl MoveIntoT<T, +Into<u8, T>> of Into<Move, T> {
+    fn into(self: Move) -> T {
+        let move_u8: u8 = match self {
+            Move::Beat => 1_u8,
+            Move::Counter => 2_u8,
+            Move::Rush => 3_u8,
+        };
+        move_u8.into()
     }
 }
 
@@ -136,25 +170,47 @@ impl TwoHashesImpl of TwoHashesTrait {
 }
 
 
-impl MoveIntoU8<T, +Into<u8, T>> of Into<Move, T> {
-    fn into(self: Move) -> T {
-        match self {
-            Move::Beat => 0_u8,
-            Move::Counter => 1_u8,
-            Move::Rush => 2_u8,
-        }.into()
-    }
-}
-
 #[derive(Copy, Drop, Print, Serde)]
 enum MatchResult {
     Winner: AB,
     Draw,
 }
 
+impl MatchResultIntoByteArray of Into<MatchResult, ByteArray> {
+    fn into(self: MatchResult) -> ByteArray {
+        match self {
+            MatchResult::Winner(ab) => format!("winner {}", ab),
+            MatchResult::Draw => "draw",
+        }
+    }
+}
+
 #[derive(Copy, Drop, Print, Serde)]
 struct Outcome {
-    MatchResult: MatchResult,
+    result: MatchResult,
     move: Move
 }
+
+impl OutcomeIntoByteArray of Into<Outcome, ByteArray> {
+    fn into(self: Outcome) -> ByteArray {
+        let result: ByteArray = self.result.into();
+        let move: ByteArray = self.move.into();
+        format!("{} with move {}", result, move)
+    }
+}
+
+
+impl DisplayImplT<T, +Into<T, ByteArray>, +Copy<T>> of Display<T> {
+    fn fmt(self: @T, ref f: Formatter) -> Result<(), Error> {
+        let str: ByteArray = (*self).into();
+        f.buffer.append(@str);
+        Result::Ok(())
+    }
+}
+
+
+impl DisplayImplOutcome = DisplayImplT<Outcome>;
+impl DisplayImplMatchResult = DisplayImplT<MatchResult>;
+impl DisplayImplMove = DisplayImplT<Move>;
+impl DisplayImplAB = DisplayImplT<AB>;
 

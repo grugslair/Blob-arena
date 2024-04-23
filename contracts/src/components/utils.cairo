@@ -4,6 +4,15 @@ enum AB {
     B,
 }
 
+impl ABIntoByteArray of Into<AB, ByteArray> {
+    fn into(self: AB) -> ByteArray {
+        match self {
+            AB::A => "A",
+            AB::B => "B",
+        }
+    }
+}
+
 #[derive(Copy, Drop, Print, Serde, PartialEq)]
 enum Winner {
     A,

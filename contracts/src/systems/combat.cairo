@@ -27,7 +27,7 @@ fn calculate_draw_damage(attacker: Stats, defender: Stats, mode: Move) -> u8 {
 
 
 fn calculate_damage(player_a: Stats, player_b: Stats, outcome: Outcome) -> (u8, u8) {
-    match outcome.MatchResult {
+    match outcome.result {
         MatchResult::Draw => (
             calculate_draw_damage(player_a, player_b, outcome.move),
             calculate_draw_damage(player_b, player_a, outcome.move)
@@ -49,20 +49,20 @@ fn calculate_damage(player_a: Stats, player_b: Stats, outcome: Outcome) -> (u8, 
 
 
 fn get_outcome(move_a: Move, move_b: Move) -> Outcome {
-    let MatchResult_u8: u8 = (move_a.into() - move_b.into() % 3);
-    if MatchResult_u8 == 0 {
-        return Outcome { MatchResult: MatchResult::Draw, move: move_a };
+    let result_u8: u8 = (3_u8 + move_a.into() - move_b.into()) % 3;
+    if result_u8 == 0 {
+        return Outcome { result: MatchResult::Draw, move: move_a };
     };
 
-    let winner: AB = match (MatchResult_u8 % 2).is_non_zero() {
-        false => AB::B,
-        true => AB::A,
+    let winner: AB = match (result_u8 % 2).is_non_zero() {
+        false => AB::A,
+        true => AB::B,
     };
     let move = match winner {
         AB::A => move_a,
         AB::B => move_b,
     };
 
-    return Outcome { MatchResult: MatchResult::Winner(winner), move };
+    return Outcome { result: MatchResult::Winner(winner), move };
 }
 
