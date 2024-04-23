@@ -1,16 +1,18 @@
 use starknet::{ContractAddress};
 
+#[derive(Model, Copy, Drop, Print, Serde)]
 struct Lobby {
     #[key]
-    id: ContractAddress,
+    id: u128,
+    owner: ContractAddress,
     running: bool,
 }
 
+#[derive(Model, Copy, Drop, Print, Serde)]
 struct LobbyPlayer {
     #[key]
-    lobby_id: ContractAddress,
-    #[key]
-    player_id: ContractAddress,
+    address: ContractAddress,
+    lobby_id: u128,
     blobert_id: u128,
     wins: u128,
     joined: bool,

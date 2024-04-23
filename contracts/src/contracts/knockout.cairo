@@ -3,13 +3,6 @@ use starknet::{ContractAddress};
 
 #[starknet::interface]
 trait IKnockoutActions<TContractState> {
-    fn new(
-        self: @TContractState,
-        player_a: ContractAddress,
-        player_b: ContractAddress,
-        blobert_a: u128,
-        blobert_b: u128
-    ) -> u128;
     fn commit(self: @TContractState, combat_id: u128, hash: felt252);
     fn reveal(self: @TContractState, combat_id: u128, move: Move, salt: felt252);
 }
@@ -25,17 +18,6 @@ mod knockout_actions {
     };
     #[abi(embed_v0)]
     impl KnockoutActionsImpl of IKnockoutActions<ContractState> {
-        fn new(
-            self: @ContractState,
-            player_a: ContractAddress,
-            player_b: ContractAddress,
-            blobert_a: u128,
-            blobert_b: u128
-        ) -> u128 {
-            KnockoutGameTrait::new(
-                self.world_dispatcher.read(), player_a, player_b, blobert_a, blobert_b,
-            )
-        }
         fn commit(self: @ContractState, combat_id: u128, hash: felt252) {
             self.get_game(combat_id).commit_move(hash);
         }
@@ -48,7 +30,7 @@ mod knockout_actions {
     impl KnockoutInternalImpl of KnockoutInternalTrait {
         #[inline(always)]
         fn get_game(self: @ContractState, combat_id: u128) -> KnockoutGame {
-            KnockoutGameTrait::create(self.world_dispatcher.read(), combat_id)
+            self.world_dispatcher.read().get_knockout_game(combat_id)
         }
     }
 }

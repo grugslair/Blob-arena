@@ -26,4 +26,8 @@ impl BlobertWorldImpl of BlobertWorldTrait {
         blobert.owner = owner;
         set!(self, (blobert,));
     }
+    fn assert_blobert_owner(self: World, blobert_id: u128, player: ContractAddress) {
+        let blobert = self.get_blobert(blobert_id);
+        blobert.assert_owner(player);
+    }
 }
