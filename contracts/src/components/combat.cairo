@@ -48,10 +48,9 @@ impl MoveIntoByteArray of Into<Move, ByteArray> {
 impl TIntoMove<T, +TryInto<T, u8>> of Into<T, Move> {
     fn into(self: T) -> Move {
         match self.try_into().unwrap() {
-            0_u8 => panic!("Move id out of range"),
-            1_u8 => Move::Beat,
-            2_u8 => Move::Counter,
-            3_u8 => Move::Rush,
+            0_u8 => Move::Beat,
+            1_u8 => Move::Counter,
+            2_u8 => Move::Rush,
             _ => panic!("Move id out of range"),
         }
     }
@@ -60,9 +59,9 @@ impl TIntoMove<T, +TryInto<T, u8>> of Into<T, Move> {
 impl MoveIntoT<T, +Into<u8, T>> of Into<Move, T> {
     fn into(self: Move) -> T {
         let move_u8: u8 = match self {
-            Move::Beat => 1_u8,
-            Move::Counter => 2_u8,
-            Move::Rush => 3_u8,
+            Move::Beat => 0_u8,
+            Move::Counter => 1_u8,
+            Move::Rush => 2_u8,
         };
         move_u8.into()
     }

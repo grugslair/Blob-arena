@@ -9,10 +9,10 @@ mod test {
     fn test_combat() {
         let stats_a = Stats { attack: 10, defense: 20, speed: 20, strength: 20, };
         let stats_b = Stats { attack: 0, defense: 0, speed: 0, strength: 0, };
-        let mut n: u8 = 1;
+        let mut n: u8 = 0;
         loop {
             let move_a: Move = n.into();
-            let mut m: u8 = 1;
+            let mut m: u8 = 0;
             loop {
                 let move_b: Move = m.into();
                 let outcome = get_outcome(move_a, move_b);
@@ -27,12 +27,12 @@ mod test {
                     outcome
                 );
 
-                if m == 3 {
+                if m == 2 {
                     break;
                 }
                 m += 1;
             };
-            if n == 3 {
+            if n == 2 {
                 break;
             }
             n += 1;
