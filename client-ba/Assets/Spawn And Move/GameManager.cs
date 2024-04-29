@@ -18,7 +18,6 @@ public class GameManager : MonoBehaviour
     public JsonRpcClient provider;
     public Account masterAccount;
 
-    
     void Start()
     {
         provider = new JsonRpcClient(dojoConfig.rpcUrl);
@@ -40,8 +39,8 @@ public class GameManager : MonoBehaviour
         DojoEntitiesStatic.currentAccount = burner;
     }
 
-    async void Update()
-    {
+    //async void Update()
+    //{
         // dont register inputs if our chat is open
         //if (chatManager.chatOpen) return;
 
@@ -102,7 +101,7 @@ public class GameManager : MonoBehaviour
         //{
         //    Move(Direction.Right);
         //}
-    }
+    //}
 
     //private async void Move(Direction direction)
     //{

@@ -12,9 +12,9 @@ public class Blobert : ModelInstance
     public FieldElement owner;
 
     [ModelField("stats")]
-    public BlobertUitls.Stats stats;
+    public BlobertUtils.Stats stats;
     [ModelField("traits")]
-    public BlobertUitls.Traits traits;
+    public BlobertUtils.Traits traits;
 
     private void Start()
     {

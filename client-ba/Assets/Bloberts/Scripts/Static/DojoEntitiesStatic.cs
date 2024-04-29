@@ -24,8 +24,6 @@ public static class DojoEntitiesStatic
 
     public static Dictionary<string, TwoMoves> twoMovesDict = new Dictionary<string, TwoMoves>();
 
-    //public static Dictionary<string, Healths> healthsStorage = new Dictionary<string, Healths>();
-
     public static Dictionary<string, Blobert> allBlobertDict = new Dictionary<string, Blobert>();
 
     public static List<Knockout> knockoutsList = new List<Knockout>();

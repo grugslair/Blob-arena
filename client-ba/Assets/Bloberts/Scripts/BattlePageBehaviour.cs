@@ -5,24 +5,23 @@ using UnityEngine;
 
 public class BattlePageBehaviour : Menu
 {
-    public TMP_Text addressTextA;
-    public TMP_Text addressTextB;
+    [SerializeField] private TMP_Text addressPlayerText;
+    [SerializeField] private TMP_Text addressEnemyText;
 
-    public GameObject commitButton;
-    public GameObject revealButton;
-    public GameObject waitButton;
+    [SerializeField] private GameObject commitButton;
+    [SerializeField] private GameObject revealButton;
+    [SerializeField] private GameObject waitButton;
+    [SerializeField] private GameObject winnerBanner;
+    [SerializeField] private TMP_Text winnerText;
 
-    public GameObject winnerThing;
-    public TMP_Text winnerText; 
+    [SerializeField] private TMP_Text playerHpText;
+    [SerializeField] private TMP_Text enemyHpText;
 
-    public TMP_Text hpTextA;
-    public TMP_Text hpTextB;
+    [SerializeField] private BlobertCardData playerBlobertCardData;
+    [SerializeField] private BlobertCardData enemyBlobertCardData;
 
-    public BlobertCardData blobertCardDataA;
-    public BlobertCardData blobertCardDataB;
-
-    public int secretNumber;
-    public BlobertUitls.Move lastMove;
+    [SerializeField] private int secretNumber;
+    [SerializeField] private BlobertUtils.Move lastMove;
 
     //public int gameState = 0;
 
@@ -44,9 +43,6 @@ public class BattlePageBehaviour : Menu
 
     private void OnEnable()
     {
-        UpdateData();
-        secretNumber = UnityEngine.Random.Range(0, 100000);
-
         if (DojoEntitiesStatic.knockoutCurrentGame.playerA.Hex() == DojoEntitiesStatic.currentAccount.Address.Hex())
         {
             playerLetter = "a";
@@ -55,6 +51,9 @@ public class BattlePageBehaviour : Menu
         {
             playerLetter = "b";
         }
+
+        UpdateData();
+        secretNumber = UnityEngine.Random.Range(0, 100000);
     }
 
     private void Update()
@@ -84,7 +83,7 @@ public class BattlePageBehaviour : Menu
             commitButton.SetActive(false);
             waitButton.SetActive(false);
 
-            winnerThing.SetActive(true);
+            winnerBanner.SetActive(true);
             winnerText.text = $"Player {DojoEntitiesStatic.knockoutCurrentGame.playerB.Hex().Substring(0, 6)} wins";
 
             return;
@@ -96,7 +95,7 @@ public class BattlePageBehaviour : Menu
             commitButton.SetActive(false);
             waitButton.SetActive(false);
 
-            winnerThing.SetActive(true);
+            winnerBanner.SetActive(true);
             winnerText.text = $"Player {DojoEntitiesStatic.knockoutCurrentGame.playerA.Hex().Substring(0, 6)} wins";
 
             return;
@@ -227,11 +226,11 @@ public class BattlePageBehaviour : Menu
                 lastInteractionWithContract = DateTime.Now; 
             }
 
-            var pedersanOutput = BlobertUitls.PedersenFunction(secretNumber, action);
+            var pedersanOutput = BlobertUtils.PedersenFunction(secretNumber, action);
 
             var pedersenHash = new FieldElement(pedersanOutput);
 
-            lastMove = (BlobertUitls.Move)action;
+            lastMove = (BlobertUtils.Move)action;
 
             var endpoint = new DojoCallsStatis.EndpointDojoCallStruct
             {
@@ -299,13 +298,28 @@ public class BattlePageBehaviour : Menu
 
     public void UpdateData()
     {
-        addressTextA.text = DojoEntitiesStatic.knockoutCurrentGame.playerA.Hex().Substring(0, 7);
-        addressTextB.text = DojoEntitiesStatic.knockoutCurrentGame.playerB.Hex().Substring(0, 7);
+        if (playerLetter == "a")
+        {
+            addressEnemyText.text = DojoEntitiesStatic.knockoutCurrentGame.playerB.Hex().Substring(0, 7);
+            addressPlayerText.text = DojoEntitiesStatic.knockoutCurrentGame.playerA.Hex().Substring(0, 7);
 
-        blobertCardDataA.SetBlobertId(DojoEntitiesStatic.knockoutCurrentGame.blobertA);
-        blobertCardDataB.SetBlobertId(DojoEntitiesStatic.knockoutCurrentGame.blobertB);
+            playerBlobertCardData.SetBlobertId(DojoEntitiesStatic.knockoutCurrentGame.blobertA);
+            enemyBlobertCardData.SetBlobertId(DojoEntitiesStatic.knockoutCurrentGame.blobertB);
 
-        hpTextA.text = $"HP: {DojoEntitiesStatic.healthsCurrentGame.a}";
-        hpTextB.text = $"HP: {DojoEntitiesStatic.healthsCurrentGame.b}";
+            playerHpText.text = $"HP: {DojoEntitiesStatic.healthsCurrentGame.a}";
+            enemyHpText.text = $"HP: {DojoEntitiesStatic.healthsCurrentGame.b}";
+
+        }
+        else if (playerLetter == "b")
+        {
+            addressPlayerText.text = DojoEntitiesStatic.knockoutCurrentGame.playerB.Hex().Substring(0, 7);
+            addressEnemyText.text = DojoEntitiesStatic.knockoutCurrentGame.playerA.Hex().Substring(0, 7);
+
+            enemyBlobertCardData.SetBlobertId(DojoEntitiesStatic.knockoutCurrentGame.blobertA);
+            playerBlobertCardData.SetBlobertId(DojoEntitiesStatic.knockoutCurrentGame.blobertB);
+
+            enemyHpText.text = $"HP: {DojoEntitiesStatic.healthsCurrentGame.a}";
+            playerHpText.text = $"HP: {DojoEntitiesStatic.healthsCurrentGame.b}";
+        }
     }
 }

@@ -1,8 +1,10 @@
+using DG.Tweening;
 using Dojo;
 using System.Collections;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using static UnityEngine.GraphicsBuffer;
 
 public class LoginScreenBehaviour : Menu
 {
@@ -20,29 +22,26 @@ public class LoginScreenBehaviour : Menu
 
     // bloberts should blob
     //till the new blobert is minted, once minter we go onto the next screen
-    
 
+    [SerializeField] private RawImage shadowImage;
+    [SerializeField] private GameObject realBackdrop;
+    [SerializeField] private GameObject fakeBackdrop;
 
-    public RawImage rawImage;
+    [SerializeField] private RectTransform bloberLeft;
+    [SerializeField] private RectTransform bobertRight;
 
-    public Animator blobertAnimLeft; // Assign this in the inspector
-    public Animator blobertAnimRight; // Assign this in the inspector
-    public Animator mintBlobertAnim; // Assign this in the inspector
+    [SerializeField] private Transform shakingTransform;
 
-    public Transform cameraTransform;
+    [SerializeField] private TMP_Text addressText;
 
-    public TMP_Text addressText;
+    [SerializeField] private GameManager gameManager;
 
-    public GameManager gameManager;
+    [SerializeField] private Menu mainMenu;
+    [SerializeField] private MenuManager menuManager;
 
+    [SerializeField] private WorldManager worldManager;
 
-    public Menu mainMenu;
-    public MenuManager menuManager;
-
-    public WorldManager worldManager;
-
-    public GameObject popUp;
-
+    [SerializeField] private GameObject popUp;
 
     private bool burnerCreated = false;
   
@@ -58,16 +57,12 @@ public class LoginScreenBehaviour : Menu
         {
             burnerCreated = true;
 
-            blobertAnimLeft.SetTrigger("comeDown");
-            blobertAnimRight.SetTrigger("comeDown");
-
-            mintBlobertAnim.SetTrigger("comeUp");
+            var animator = transform.GetComponent<Animator>();
+            animator.SetTrigger("LoggedIn");
 
             addressText.text = $"{DojoEntitiesStatic.currentAccount.Address.Hex().Substring(0,6)}...";
-            Debug.Log("this should be the address " + DojoEntitiesStatic.currentAccount.Address.Hex());
-            Debug.Log("this should be the pk " + DojoEntitiesStatic.currentAccount.Signer.Inner.Hex());
-
-            DojoEntitiesStatic.burnerManagerSaver.AddAccountToLocalData(DojoEntitiesStatic.currentAccount.Address.Hex(), DojoEntitiesStatic.currentAccount.Signer.Inner.Hex());
+            
+            //DojoEntitiesStatic.burnerManagerSaver.AddAccountToLocalData(DojoEntitiesStatic.currentAccount.Address.Hex(), DojoEntitiesStatic.currentAccount.Signer.Inner.Hex());
 
             worldManager.LoadData();    // this is  afucntion to sync on demand easy
 
@@ -95,30 +90,30 @@ public class LoginScreenBehaviour : Menu
         }
     }
 
-    public void Shake(float duration, float magnitude)
+    public void Shake(float duration)
     {
-        StartCoroutine(FadeIn(rawImage, 2f));
-        StartCoroutine(ShakeCoroutine(5f, 10f));
+        StartCoroutine(ShakeCoroutine(duration, 10f));
     }
 
-    IEnumerator FadeIn(RawImage image, float duration)
+    public void StartBlobbing()
     {
-        float elapsedTime = 0.25f;
-        Color c = image.color;
+        realBackdrop.SetActive(true);
+        fakeBackdrop.SetActive(false);
 
+        transform.GetComponent<Animator>().enabled = false;
+        
+        bloberLeft.DOAnchorPosY(bloberLeft.anchoredPosition.y + 30, 1.4f)
+           .SetLoops(-1, LoopType.Yoyo) 
+           .SetEase(Ease.InOutQuad);
 
-        while (elapsedTime < duration)
-        {
-            elapsedTime += Time.deltaTime;
-            c.a = Mathf.Clamp01(elapsedTime / duration);
-            image.color = c;
-            yield return null;
-        }
+        bobertRight.DOAnchorPosY(bobertRight.anchoredPosition.y + 25, 2)
+           .SetLoops(-1, LoopType.Yoyo) 
+           .SetEase(Ease.InOutQuad); 
     }
 
     IEnumerator ShakeCoroutine(float duration, float magnitude)
     {
-        Vector3 originalPosition = cameraTransform.localPosition;
+        Vector3 originalPosition = shakingTransform.localPosition;
         float elapsedTime = 0f;
 
         while (elapsedTime < duration)
@@ -126,7 +121,7 @@ public class LoginScreenBehaviour : Menu
             float x = Random.Range(-1f, 1f) * magnitude;
             float y = Random.Range(-1f, 1f) * magnitude;
 
-            cameraTransform.localPosition = new Vector3(x, y, originalPosition.z);
+            shakingTransform.localPosition = new Vector3(x, y, originalPosition.z);
 
             elapsedTime += Time.deltaTime;
 
@@ -137,7 +132,7 @@ public class LoginScreenBehaviour : Menu
         }
 
         // Reset the camera position
-        cameraTransform.localPosition = originalPosition;
+        shakingTransform.localPosition = originalPosition;
     }
 
     public async void MintBlobert()

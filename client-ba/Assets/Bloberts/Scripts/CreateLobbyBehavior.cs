@@ -26,7 +26,7 @@ public class CreateLobbyBehavior : Menu
         blobertCardData.SetSwordText(blobert.stats.attack.ToString());
         blobertCardData.SetShieldText(blobert.stats.defense.ToString());
 
-        idText.text = $"ID: {BlobertUitls.HexToBigInt(blobert.blobertId.Hex())}";
+        idText.text = $"ID: {BlobertUtils.HexToBigInt(blobert.blobertId.Hex())}";
     }
 
     private DateTime lastInteractionWithContract = DateTime.MinValue;
@@ -112,7 +112,7 @@ public class CreateLobbyBehavior : Menu
                 break;
             }
 
-            if (BlobertUitls.Address0sFix(currentKnockout.playerA.Hex()) == DojoEntitiesStatic.currentAccount.Address.Hex() || BlobertUitls.Address0sFix(currentKnockout.playerB.Hex()) == DojoEntitiesStatic.currentAccount.Address.Hex())
+            if (BlobertUtils.Address0sFix(currentKnockout.playerA.Hex()) == DojoEntitiesStatic.currentAccount.Address.Hex() || BlobertUtils.Address0sFix(currentKnockout.playerB.Hex()) == DojoEntitiesStatic.currentAccount.Address.Hex())
             {
                 // the knowouct round made contains the player
                 // find the healths round by doing another loop ffs

@@ -13,9 +13,9 @@ public class LastRound : ModelInstance
     public byte healthB;
 
     [ModelField("move_a")]
-    public BlobertUitls.Move moveA;
+    public BlobertUtils.Move moveA;
     [ModelField("move_b")]
-    public BlobertUitls.Move moveB;
+    public BlobertUtils.Move moveB;
 
     [ModelField("damage_a")]
     public byte damageA;

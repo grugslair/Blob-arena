@@ -429,7 +429,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5207069178757316652, guid: 8b32c6922ae467f4b9e1f9073ae0d48b, type: 3}
       propertyPath: m_PixelsPerUnitMultiplier
-      value: 2
+      value: 9
       objectReference: {fileID: 0}
     - target: {fileID: 5271235044593728640, guid: 8b32c6922ae467f4b9e1f9073ae0d48b, type: 3}
       propertyPath: m_Pivot.x
