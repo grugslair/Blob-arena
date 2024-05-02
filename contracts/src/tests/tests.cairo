@@ -49,7 +49,7 @@ mod test {
             loop {
                 let move_b: Move = m.into();
                 let outcome = get_outcome(move_a, move_b);
-                let (damage_a, damage_b) = calculate_damage(stats_a, outcome);
+                let (damage_a, damage_b) = calculate_damage(stats_a, stats_b, outcome);
 
                 println!(
                     "a: {} \t{}\tb: {} \t{}\tresult: {} ",
