@@ -1,57 +1,72 @@
 using Dojo.Starknet;
-using System.Collections;
-using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class BlobertCardData : MonoBehaviour
 {
-    [SerializeField] RawImage blobertPic;
+    [SerializeField] RawImage _blobertBackground;
+    [SerializeField] RawImage _blobertPic;
 
-    [SerializeField] TMP_Text swordText;
-    [SerializeField] TMP_Text bicepText;
-    [SerializeField] TMP_Text shieldText;
-    [SerializeField] TMP_Text shoesText;
+    [SerializeField] TMP_Text _swordValueText;
+    [SerializeField] TMP_Text _bicepValueText;
+    [SerializeField] TMP_Text _shieldValueText;
+    [SerializeField] TMP_Text _shoesValueText;
+
+    [SerializeField] TMP_Text _idValueText;
 
     public FieldElement blobertId;
     public Blobert blobert;
 
-    public void SetBlobertId(FieldElement id)
+    public void SetBlobertData(FieldElement id)
     {
         blobertId = id;
 
-        blobert = DojoEntitiesStatic.allBlobertDict[id.Hex()];
-        //get the data and everything from here too
+        blobert = DojoEntitiesStorage.allBlobertDict[id.Hex()];
 
-        SetBicepText(blobert.stats.strength.ToString());
-        SetSwordText(blobert.stats.attack.ToString());
-        SetShieldText(blobert.stats.defense.ToString());
-        SetShoesText(blobert.stats.speed.ToString());
+        SetBicepText(blobert.dojoStats.strength.ToString());
+        SetSwordValue(blobert.dojoStats.attack.ToString());
+        SetShieldText(blobert.dojoStats.defense.ToString());
+        SetShoesText(blobert.dojoStats.speed.ToString());
+
+        SetBlobertId();
     }
 
-    public void SetSwordText(string text)
+    public void SetSwordValue(string text)
     {
-        swordText.text = text;
+        _swordValueText.text = text;
     }
 
     public void SetBicepText(string text)
     {
-        bicepText.text = text;
+        _bicepValueText.text = text;
     }
 
     public void SetShieldText(string text)
     {
-        shieldText.text = text;
+        _shieldValueText.text = text;
     }
 
     public void SetShoesText(string text)
     {
-        shoesText.text = text;
+        _shieldValueText.text = text;
     }
 
     public void SetBlobertPic(Texture2D texture)
     {
-        blobertPic.texture = texture;
+        _blobertPic.texture = texture;
+    }
+
+    public void SetBlobertId()
+    {
+        if (_idValueText != null)
+        {
+            _idValueText.text = $"ID: {BlobertUtils.HexToBigInt(blobert.dojoBlobertId.Hex())}";
+        }
+    }
+
+    public void SetBlobertBackground(Color color)
+    {
+        _blobertBackground.color = color;
     }
 }

@@ -1,8 +1,6 @@
 using Dojo;
 using Dojo.Starknet;
 using Dojo.Torii;
-using System.Numerics;
-using UnityEngine;
 
 public class Knockout : ModelInstance
 {
@@ -19,14 +17,45 @@ public class Knockout : ModelInstance
     [ModelField("blobert_b")]
     public FieldElement blobertB;
 
-
     private void Start()
     {
-        DojoEntitiesStatic.knockoutsList.Add(this);
+        DojoEntitiesStorage.knockoutDict.Add(combatId.Hex(), this);
+
+        if (DojoEntitiesStorage.challengeInvite != null)
+        {
+            var invStruct = DojoEntitiesStorage.challengeInvite;
+
+            if (playerA.Hex() == invStruct.sender.Hex()  ||   playerA.Hex() == invStruct.receiver.Hex())
+            {
+                
+            }
+            else
+            {
+                return;
+            }
+
+            if (playerB.Hex() == invStruct.sender.Hex() || playerB.Hex() == invStruct.receiver.Hex())
+            {
+                DojoEntitiesStorage.knockoutCurrentGame = this;
+            }
+            else
+            {
+                return;
+            }
+        }
+
+
+        //if (DojoEntitiesStorage.currentCombatId != null)
+        //{
+        //    if (DojoEntitiesStorage.currentCombatId.Hex() == this.combatId.Hex())
+        //    {
+        //        DojoEntitiesStorage.knockoutCurrentGame = this;
+        //    }
+        //}
     }
+
     public override void OnUpdate(Model model)
     {
         base.OnUpdate(model);
-
     }
 }

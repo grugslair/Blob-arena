@@ -3,23 +3,22 @@ using Dojo.Starknet;
 using Dojo.Torii;
 using System;
 
-public class Round : ModelInstance
+public class Lobby : ModelInstance
 {
     [ModelField("combat_id")]
     public FieldElement combatId;
 
-    [ModelField("number")]
-    public UInt32 number;
+    [ModelField("amount")]
+    public BlobertUtils.U256 a;
+    [ModelField("blobert")]
+    public Boolean b;
 
-    [ModelField("a_health")]
-    public byte healthA;
-    [ModelField("b_health")]
-    public byte healthB;
-
-    private void Start()
+    // Start is called before the first frame update
+    void Start()
     {
         
     }
+    
 
     public override void OnUpdate(Model model)
     {

@@ -9,8 +9,8 @@ public class GameManager : MonoBehaviour
     [SerializeField] WorldManager worldManager;
     [SerializeField] ChatManager chatManager;
 
-    [SerializeField] WorldManagerData dojoConfig;
-    [SerializeField] GameManagerData gameManagerData; 
+    public WorldManagerData dojoConfig;
+    //[SerializeField] GameManagerData gameManagerData; 
 
     public BurnerManager burnerManager;
     private Dictionary<FieldElement, string> spawnedAccounts = new();
@@ -21,7 +21,7 @@ public class GameManager : MonoBehaviour
     void Start()
     {
         provider = new JsonRpcClient(dojoConfig.rpcUrl);
-        masterAccount = new Account(provider, new SigningKey(gameManagerData.masterPrivateKey), new FieldElement(gameManagerData.masterAddress));
+        masterAccount = new Account(provider, new SigningKey(dojoConfig.masterPrivateKey), new FieldElement(dojoConfig.masterAddress));
 
         burnerManager = new BurnerManager(provider, masterAccount);
 
@@ -36,7 +36,7 @@ public class GameManager : MonoBehaviour
     {
         var burner = await burnerManager.DeployBurner(new SigningKey());
         spawnedAccounts[burner.Address] = null;
-        DojoEntitiesStatic.currentAccount = burner;
+        DojoEntitiesStorage.currentAccount = burner;
     }
 
     //async void Update()

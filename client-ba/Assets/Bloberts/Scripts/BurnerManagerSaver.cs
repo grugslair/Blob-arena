@@ -32,7 +32,7 @@ public class BurnerManagerSaver : MonoBehaviour
 
     void Start()
     {
-        DojoEntitiesStatic.burnerManagerSaver = this;
+        //DojoEntitiesStorage.burnerManagerSaver = this;
     }
 
     public void AddAccountToLocalData(string address, string pk)

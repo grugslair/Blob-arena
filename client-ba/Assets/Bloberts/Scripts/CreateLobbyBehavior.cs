@@ -1,4 +1,5 @@
 using Dojo.Starknet;
+using DojoContractCommunication;
 using System;
 using TMPro;
 using UnityEngine;
@@ -6,7 +7,7 @@ using UnityEngine;
 public class CreateLobbyBehavior : Menu
 {
     public MenuManager menuManager;
-    public Menu battlePhase;
+    public Menu _lobbyPhase;
     //se the data for the blobert and have an input field take waya the button
 
     public BlobertCardData blobertCardData;
@@ -15,22 +16,37 @@ public class CreateLobbyBehavior : Menu
     public TMP_Text idText;
     public TMP_Text addressText;
 
+    [SerializeField] private GameObject _sendRequestGameobject;
+
+    [SerializeField] private GameObject _cancelRequestGameobject;
+    [SerializeField] private TMP_Text _cancelRequestText;
+
+    private void Start()
+    {
+        UiReferencesStatic.createLobbyBehavior = this;
+    }
+
     private void OnEnable()
     {
-        var blobert = DojoEntitiesStatic.userBlobertData;
+        UiReferencesStatic.createLobbyBehavior = this;
 
-        addressText.text = DojoEntitiesStatic.currentAccount.Address.Hex();
+        var blobert = DojoEntitiesStorage.userChoosenBlobert;
 
-        blobertCardData.SetBicepText(blobert.stats.strength.ToString());
-        blobertCardData.SetShoesText(blobert.stats.speed.ToString());
-        blobertCardData.SetSwordText(blobert.stats.attack.ToString());
-        blobertCardData.SetShieldText(blobert.stats.defense.ToString());
+        addressText.text = DojoEntitiesStorage.currentAccount.Address.Hex();
 
-        idText.text = $"ID: {BlobertUtils.HexToBigInt(blobert.blobertId.Hex())}";
+        blobertCardData.SetBicepText(blobert.dojoStats.strength.ToString());
+        blobertCardData.SetShoesText(blobert.dojoStats.speed.ToString());
+        blobertCardData.SetSwordValue(blobert.dojoStats.attack.ToString());
+        blobertCardData.SetShieldText(blobert.dojoStats.defense.ToString());
+
+        idText.text = $"ID: {BlobertUtils.HexToBigInt(blobert.dojoBlobertId.Hex())}";
+
+        CheckForActiveRequest();
     }
 
     private DateTime lastInteractionWithContract = DateTime.MinValue;
 
+    /*
     public async void CreateLobby()
     {
         double secondsSinceLastCommit = (DateTime.Now - lastInteractionWithContract).TotalSeconds;
@@ -51,24 +67,24 @@ public class CreateLobbyBehavior : Menu
             return;
         }
 
-        var endpoint = new DojoCallsStatis.EndpointDojoCallStruct
+        var endpoint = new EndpointDojoCallStruct
         {
-            account = DojoEntitiesStatic.currentAccount,
-            functionName = "new",
-            addressOfSystem = DojoCallsStatis.knockoutAddress
+            account = DojoEntitiesStorage.currentAccount,
+            addressOfSystem = DojoEntitiesStorage.worldManagerData.knockoutContractAddress,
+            functionName = ,
         };
 
         Debug.Log("Creating new game");
-        Debug.Log("Player A: " + DojoEntitiesStatic.currentAccount.Address.Hex());
+        Debug.Log("Player A: " + DojoEntitiesStorage.currentAccount.Address.Hex());
         Debug.Log("Player B: " + new FieldElement(inputFieldOtherPlayer.text).Hex());
-        Debug.Log("Blobert A: " + DojoEntitiesStatic.userBlobertData.blobertId.Hex());
+        Debug.Log("Blobert A: " + DojoEntitiesStorage.userBlobertData.blobertId.Hex());
 
         //for loop to check all the blobs and if the other player has the blobert
 
         var blobertFound = false;
         var blobertId = new FieldElement("0");
 
-        foreach (var blobert in DojoEntitiesStatic.allBlobertDict)
+        foreach (var blobert in DojoEntitiesStorage.allBlobertDict)
         {
             if (blobert.Value.owner.Hex() == inputFieldOtherPlayer.text)
             {
@@ -84,73 +100,200 @@ public class CreateLobbyBehavior : Menu
         }
 
 
-        var dataStruct = new DojoCallsStatis.CreateNewGameStruct
+        var dataStruct = new DojoContractCaller.CreateNewGameStruct
         {
-            player_a = DojoEntitiesStatic.currentAccount.Address,
+            player_a = DojoEntitiesStorage.currentAccount.Address,
             player_b = new FieldElement(inputFieldOtherPlayer.text),
-            blobert_aID = DojoEntitiesStatic.userBlobertData.blobertId,
+            blobert_aID = DojoEntitiesStorage.userBlobertData.blobertId,
             blobert_bID = blobertId,
         };
 
-        var transaction = await DojoCallsStatis.CreateNewGame(dataStruct, endpoint);
+        var transaction = await DojoContractCaller.CreateNewGame(dataStruct, endpoint);
+    }
+    */
+
+    public async void SendChallenge()
+    {
+        //double secondsSinceLastCommit = (DateTime.Now - lastInteractionWithContract).TotalSeconds;
+
+        //if (secondsSinceLastCommit < 2)
+        //{
+        //    Debug.Log("You are creating a lobby too fast");
+        //    return;
+        //}
+        //else
+        //{
+        //    lastInteractionWithContract = DateTime.Now;
+        //}
+
+        //if (string.IsNullOrEmpty(inputFieldOtherPlayer.text))
+        //{
+        //    return;
+        //}
+
+        // this should send the invite
+
+        Debug.Log("called the send challenge function");
+
+        var endpoint = new EndpointDojoCallStruct
+        {
+            account = DojoEntitiesStorage.currentAccount,
+            addressOfSystem = DojoEntitiesStorage.worldManagerData.challengeblobertContractAddress,
+            functionName = ChallengeContract.FunctionNames.SendInvite.EnumToString(),
+        };
+
+        var dataStruct = new ChallengeContract.SendInviteStruct
+        {
+            receiver = new FieldElement(inputFieldOtherPlayer.text),
+            blobertId = DojoEntitiesStorage.userChoosenBlobert.dojoBlobertId,
+        };
+
+        var transaction = await ChallengeContract.SendInvite(dataStruct, endpoint);
+
+        CheckForActiveRequest();
+    }
+
+    public async void CancelSentInvite()
+    {
+        Debug.Log("called the cancel the sent inv");
+
+        var endpoint = new EndpointDojoCallStruct
+        {
+            account = DojoEntitiesStorage.currentAccount,
+            addressOfSystem = DojoEntitiesStorage.worldManagerData.challengeblobertContractAddress,
+            functionName = ChallengeContract.FunctionNames.CloseInvite.EnumToString(),
+        };
+
+        var dataStruct = new ChallengeContract.CloseInviteStruct
+        {
+            challengeId = DojoEntitiesStorage.selectedChallengeID,
+        };
+
+        var transaction = await ChallengeContract.CloseInvite(dataStruct, endpoint);
+
+        CheckForActiveRequest();
+    }
+
+    public void StartGame()
+    {
+        Debug.Log("called the starting game func");
+
+
+        var endpoint = new EndpointDojoCallStruct
+        {
+            account = DojoEntitiesStorage.currentAccount,
+            addressOfSystem = DojoEntitiesStorage.worldManagerData.challengeblobertContractAddress,
+            functionName = ChallengeContract.FunctionNames.AcceptResponse.EnumToString(),
+        };
+
+        var dataStruct = new ChallengeContract.AcceptResponseStruct
+        {
+            challengeId = new FieldElement(inputFieldOtherPlayer.text),
+        };
+
+        var transaction = ChallengeContract.AcceptResponse(dataStruct, endpoint);
     }
 
     void Update()
     {
-        if (DojoEntitiesStatic.healthsCurrentGame != null && DojoEntitiesStatic.knockoutCurrentGame != null)
+        //if (DojoEntitiesStorage.healthsCurrentGame != null && DojoEntitiesStorage.knockoutCurrentGame != null)
+        //{
+        //    Debug.Log("we move to the next phase");
+        //    menuManager.OpenMenu(battlePhase);
+        //}
+
+        //for (int i = DojoEntitiesStorage.knockoutsList.Count - 1; i >= 0; i--)
+        //{
+        //    var currentKnockout = DojoEntitiesStorage.knockoutsList[i];
+
+        //    if (DojoEntitiesStorage.knockoutCurrentGame != null && DojoEntitiesStorage.healthsCurrentGame != null)
+        //    {
+        //        break;
+        //    }
+
+        //    if (BlobertUtils.Address0sFix(currentKnockout.playerA.Hex()) == DojoEntitiesStorage.currentAccount.Address.Hex() || BlobertUtils.Address0sFix(currentKnockout.playerB.Hex()) == DojoEntitiesStorage.currentAccount.Address.Hex())
+        //    {
+        //        // the knowouct round made contains the player
+        //        // find the healths round by doing another loop ffs
+
+        //        for (int x = 0; x < DojoEntitiesStorage.healthsList.Count; x++)
+        //        {
+        //            //sanity check
+
+        //            var health = DojoEntitiesStorage.healthsList[x];
+        //            if (currentKnockout.combatId.Hex() == health.combatId.Hex())
+        //            {
+        //                // this is the same hex as the knowcout
+
+        //                if (health.a > 0 && health.b > 0)
+        //                {
+        //                    DojoEntitiesStorage.knockoutCurrentGame = currentKnockout;
+        //                    DojoEntitiesStorage.healthsCurrentGame = health;
+        //                    DojoEntitiesStorage.currentRoundId = currentKnockout.combatId;
+
+        //                    break;
+        //                }
+        //                else
+        //                {
+        //                    continue;
+        //                }
+        //            }
+        //        }
+
+        //    }
+        //    else
+        //    {
+        //        //delete from the list
+        //        DojoEntitiesStorage.knockoutsList.RemoveAt(i);
+        //        continue;
+        //    }
+
+        //}
+
+        // i need to check if there is a request going right now 
+
+
+        if (DojoEntitiesStorage.challengeInvite != null && DojoEntitiesStorage.challengeResponse != null)
         {
-            Debug.Log("we move to the next phase");
-            menuManager.OpenMenu(battlePhase);
+           Debug.Log("we move to the next phase");
+            menuManager.OpenMenu(_lobbyPhase);
         }
 
-        for (int i = DojoEntitiesStatic.knockoutsList.Count - 1; i >= 0; i--)
+
+        if (Input.GetKeyDown(KeyCode.H))
         {
-            var currentKnockout = DojoEntitiesStatic.knockoutsList[i];
-
-            if (DojoEntitiesStatic.knockoutCurrentGame != null && DojoEntitiesStatic.healthsCurrentGame != null)
+            if (DojoEntitiesStorage.challengeInvite != null)
             {
-                break;
-            }
-
-            if (BlobertUtils.Address0sFix(currentKnockout.playerA.Hex()) == DojoEntitiesStatic.currentAccount.Address.Hex() || BlobertUtils.Address0sFix(currentKnockout.playerB.Hex()) == DojoEntitiesStatic.currentAccount.Address.Hex())
-            {
-                // the knowouct round made contains the player
-                // find the healths round by doing another loop ffs
-
-                for (int x = 0; x < DojoEntitiesStatic.healthsList.Count; x++)
-                {
-                    //sanity check
-
-                    var health = DojoEntitiesStatic.healthsList[x];
-                    if (currentKnockout.combatId.Hex() == health.combatId.Hex())
-                    {
-                        // this is the same hex as the knowcout
-
-                        if (health.a > 0 && health.b > 0)
-                        {
-                            DojoEntitiesStatic.knockoutCurrentGame = currentKnockout;
-                            DojoEntitiesStatic.healthsCurrentGame = health;
-                            DojoEntitiesStatic.currentRoundId = currentKnockout.combatId;
-
-                            break;
-                        }
-                        else
-                        {
-                            continue;
-                        }
-                    }
-                }
-
+                Debug.Log("challenge invite is not null");
             }
             else
             {
-                //delete from the list
-                DojoEntitiesStatic.knockoutsList.RemoveAt(i);
-                continue;
+                Debug.Log("challenge invite is null");
             }
 
+            if (DojoEntitiesStorage.challengeResponse != null)
+            {
+                Debug.Log("challenge response is not null");
+            }
+            else
+            {
+                Debug.Log("challenge response is null");
+            }
         }
+    }
 
-
+    public void CheckForActiveRequest()
+    {
+        if (DojoEntitiesStorage.challengeInvite != null)
+        {
+            _sendRequestGameobject.SetActive(false);
+            _cancelRequestGameobject.SetActive(true);
+            _cancelRequestText.text = $"Cancel Request to {DojoEntitiesStorage.challengeInvite.receiver.Hex().Substring(0,6)}";
+        }
+        else
+        {
+            _sendRequestGameobject.SetActive(true);
+            _cancelRequestGameobject.SetActive(false);
+        }
     }
 }

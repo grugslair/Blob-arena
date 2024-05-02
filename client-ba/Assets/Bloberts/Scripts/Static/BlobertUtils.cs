@@ -1,3 +1,4 @@
+using Dojo.Starknet;
 using System;
 using System.Numerics;
 using System.Runtime.InteropServices;
@@ -178,6 +179,8 @@ public static class BlobertUtils
 
     [DllImport("__Internal")]
     public static extern string PedersenFunction(int value1Ptr, int value2Ptr);
+
+    public static string emptyFieldElement = "0x0000000000000000000000000000000000000000000000000000000000000000";
 
     public static BigInteger HexToBigInt(string hex)
     {

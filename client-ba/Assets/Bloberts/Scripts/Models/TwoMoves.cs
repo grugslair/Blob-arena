@@ -16,17 +16,32 @@ public class TwoMoves : ModelInstance
     public FieldElement roundId;
 
     [ModelField("a")]
-    public MoveN b;
-    [ModelField("b")]
     public MoveN a;
+    [ModelField("b")]
+    public MoveN b;
 
     private void Start()
     {
-        if (DojoEntitiesStatic.currentRoundId != null)
+        if (DojoEntitiesStorage.currentCombatId != null)
         {
-            if (DojoEntitiesStatic.currentRoundId.Hex() == roundId.Hex())
+            if (DojoEntitiesStorage.currentCombatId.Hex() == roundId.Hex())
             {
-                DojoEntitiesStatic.twoMovesCurrentGame = this;
+                DojoEntitiesStorage.twoMovesCurrentGame = this;
+            }
+        }
+
+        if (DojoEntitiesStorage.currentCombatId == null)
+        {
+            return;
+        }
+
+        if (DojoEntitiesStorage.currentCombatId.Hex() == roundId.Hex())
+        {
+            DojoEntitiesStorage.twoMovesCurrentGame = this;
+
+            if (UiReferencesStatic.battlePageBehaviour != null)
+            {
+                UiReferencesStatic.battlePageBehaviour.CallFromDataToUpdate();
             }
         }
     }
@@ -34,6 +49,20 @@ public class TwoMoves : ModelInstance
     public override void OnUpdate(Model model)
     {
         base.OnUpdate(model);
+
+        if (DojoEntitiesStorage.currentCombatId == null)
+        {
+            return;
+        }
+
+        if (DojoEntitiesStorage.currentCombatId.Hex() != roundId.Hex())
+        {
+            return;
+        }
+
+        if (UiReferencesStatic.battlePageBehaviour != null)
+        {
+            UiReferencesStatic.battlePageBehaviour.CallFromDataToUpdate();
+        }
     }
 }
-

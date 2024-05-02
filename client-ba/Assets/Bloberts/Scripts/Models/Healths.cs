@@ -1,6 +1,7 @@
 using Dojo;
 using Dojo.Starknet;
 using Dojo.Torii;
+using System;
 using UnityEngine;
 
 public class Healths : ModelInstance
@@ -15,29 +16,43 @@ public class Healths : ModelInstance
 
     private void Start()
     {
-        DojoEntitiesStatic.healthsList.Add(this);
-    }
-
-    private void Update()
-    {
-
+        DojoEntitiesStorage.healthsDict.Add(combatId.Hex(), this);
     }
 
     public override void OnUpdate(Model model)
     {
         base.OnUpdate(model);
 
-        if (DojoEntitiesStatic.currentRoundId != null)
+        if (this == DojoEntitiesStorage.healthsCurrentGame)
         {
-            if (combatId.Hex() == DojoEntitiesStatic.currentRoundId.Hex())
+            if (UiReferencesStatic.battlePageBehaviour != null)
             {
-
-                Debug.Log("Healths updated");
-                Debug.Log("a value: " + a);
-                Debug.Log("b value: " + b);
-
-                UiReferencesStatic.battlePageBehaviour.UpdateData();
+                UiReferencesStatic.battlePageBehaviour.CallFromDataToUpdate();
             }
         }
+
+        //if (DojoEntitiesStorage.inLobbyRoundId != null)
+        //{
+        //    if (combatId.Hex() == DojoEntitiesStorage.inLobbyRoundId.Hex())
+        //    {
+        //        UiReferencesStatic.battlePageBehaviour.UpdateFrontEndData();
+        //    }
+        //}
+   
+        //if (DojoEntitiesStorage.inLobbyRoundId == null)
+        //{
+        //    return;
+        //}
+
+        //if (DojoEntitiesStorage.inLobbyRoundId.Hex() != combatId.Hex())
+        //{
+        //    return;
+        //}
+
+        //if (UiReferencesStatic.battlePageBehaviour != null)
+        //{
+        //    UiReferencesStatic.battlePageBehaviour.CallFromDataToUpdate();
+        //}
     }
+
 }

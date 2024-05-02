@@ -3,7 +3,7 @@ public static class UiReferencesStatic
     public static UiStateManager uiStateManager { get; set; }
 
 
-
+    public static SearchLobbyPageBehaviour searchLobbyPageBehaviour { get; set; }
     public static BattlePageBehaviour battlePageBehaviour { get; set; }
 
     public static CreateLobbyBehavior createLobbyBehavior { get; set; }
@@ -18,6 +18,6 @@ public static class UiReferencesStatic
 
     public static SelectBlobBehavior selectBlobBehavior { get; set; }
 
-    public static LobbyBehavior lobbyBehavior { get; set; }
+    public static SearchLobbyPageBehaviour lobbyBehavior { get; set; }
 
 }

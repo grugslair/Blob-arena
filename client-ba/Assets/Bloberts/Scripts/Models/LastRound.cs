@@ -24,12 +24,9 @@ public class LastRound : ModelInstance
 
     private void Start()
     {
-        if (DojoEntitiesStatic.currentRoundId != null)
+        if (DojoEntitiesStorage.currentCombatId.Hex() == this.combatId.Hex())
         {
-            if (combatId.Hex() == DojoEntitiesStatic.currentRoundId.Hex())
-            {
-                DojoEntitiesStatic.lastRoundCurrentGame = this;
-            }
+            DojoEntitiesStorage.lastRoundCurrentGame = this;
         }
     }
 
@@ -37,12 +34,9 @@ public class LastRound : ModelInstance
     {
         base.OnUpdate(model);
 
-        if (DojoEntitiesStatic.currentRoundId != null)
+        if (this == DojoEntitiesStorage.lastRoundCurrentGame)
         {
-            if (combatId.Hex() == DojoEntitiesStatic.currentRoundId.Hex())
-            {
-                UiReferencesStatic.battlePageBehaviour.UpdateData();
-            }
+            UiReferencesStatic.battlePageBehaviour.UpdateFrontEndData();
         }
     }
 }

@@ -1,10 +1,10 @@
 using DG.Tweening;
 using Dojo;
+using DojoContractCommunication;
 using System.Collections;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
-using static UnityEngine.GraphicsBuffer;
 
 public class LoginScreenBehaviour : Menu
 {
@@ -53,14 +53,14 @@ public class LoginScreenBehaviour : Menu
 
     private void Update()
     {
-        if (!burnerCreated && DojoEntitiesStatic.currentAccount != null)
+        if (!burnerCreated && DojoEntitiesStorage.currentAccount != null)
         {
             burnerCreated = true;
 
             var animator = transform.GetComponent<Animator>();
             animator.SetTrigger("LoggedIn");
 
-            addressText.text = $"{DojoEntitiesStatic.currentAccount.Address.Hex().Substring(0,6)}...";
+            addressText.text = $"{DojoEntitiesStorage.currentAccount.Address.Hex().Substring(0,6)}...";
             
             //DojoEntitiesStatic.burnerManagerSaver.AddAccountToLocalData(DojoEntitiesStatic.currentAccount.Address.Hex(), DojoEntitiesStatic.currentAccount.Signer.Inner.Hex());
 
@@ -69,24 +69,9 @@ public class LoginScreenBehaviour : Menu
             popUp.SetActive(true);
         }
 
-        if (burnerCreated && DojoEntitiesStatic.userBlobertData != null)
+        if (burnerCreated && DojoEntitiesStorage.userBloberts.Count > 0)
         {
             menuManager.OpenMenu(mainMenu);
-        }
-
-        if (Input.GetKeyDown(KeyCode.B))
-        {
-            DojoEntitiesStatic.burnerManagerSaver.PrintAllData();
-
-            if (gameManager.burnerManager.Burners.Count > 0)
-            {
-                DojoEntitiesStatic.currentAccount = gameManager.burnerManager.Burners[gameManager.burnerManager.Burners.Count - 1];
-            }
-        }
-
-        if (Input.GetKeyDown(KeyCode.C))
-        {
-            DojoEntitiesStatic.burnerManagerSaver.ClearPlayerPrefs();
         }
     }
 
@@ -102,13 +87,15 @@ public class LoginScreenBehaviour : Menu
 
         transform.GetComponent<Animator>().enabled = false;
         
-        bloberLeft.DOAnchorPosY(bloberLeft.anchoredPosition.y + 30, 1.4f)
+        bloberLeft.DOAnchorPosY(bloberLeft.anchoredPosition.y + 30, 0.4f)
            .SetLoops(-1, LoopType.Yoyo) 
            .SetEase(Ease.InOutQuad);
 
-        bobertRight.DOAnchorPosY(bobertRight.anchoredPosition.y + 25, 2)
-           .SetLoops(-1, LoopType.Yoyo) 
-           .SetEase(Ease.InOutQuad); 
+        //delay to put here
+        bobertRight.DOAnchorPosY(bobertRight.anchoredPosition.y + 25, 0.4f)
+           .SetLoops(-1, LoopType.Yoyo)
+           .SetEase(Ease.InOutQuad)
+           .SetDelay(0.5f);
     }
 
     IEnumerator ShakeCoroutine(float duration, float magnitude)
@@ -137,19 +124,19 @@ public class LoginScreenBehaviour : Menu
 
     public async void MintBlobert()
     {
-        var endpointData = new DojoCallsStatis.EndpointDojoCallStruct
+        var endpointData = new EndpointDojoCallStruct
         {
-            account = DojoEntitiesStatic.currentAccount,
-            addressOfSystem = DojoCallsStatis.blobertActionsAddress,
-            functionName = "mint"
+            account = DojoEntitiesStorage.currentAccount,
+            addressOfSystem = DojoEntitiesStorage.worldManagerData.blobertContractAddress,
+            functionName = BlobertContract.BlobertFunction.MintBlobert.EnumToString()
         };
 
-        var structData = new DojoCallsStatis.MintBlobertStruct
+        var structData = new BlobertContract.MintBlobertStruct
         {
-            owner = DojoEntitiesStatic.currentAccount.Address
+            owner = DojoEntitiesStorage.currentAccount.Address
         };
 
-        var something = await DojoCallsStatis.MintBlobert(structData, endpointData);
+        var something = await BlobertContract.MintBlobert(structData, endpointData);
     }
 
 }

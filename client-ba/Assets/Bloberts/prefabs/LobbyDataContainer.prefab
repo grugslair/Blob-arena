@@ -425,7 +425,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1039513088249056082, guid: 8b32c6922ae467f4b9e1f9073ae0d48b, type: 3}
       propertyPath: m_Name
-      value: createLobbyButtonContainer
+      value: confirmJoinLobbyButton
       objectReference: {fileID: 0}
     - target: {fileID: 5207069178757316652, guid: 8b32c6922ae467f4b9e1f9073ae0d48b, type: 3}
       propertyPath: m_PixelsPerUnitMultiplier

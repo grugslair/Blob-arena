@@ -9,17 +9,32 @@ public class TwoHashes : ModelInstance
     public FieldElement roundId;
 
     [ModelField("a")]
-    public FieldElement b;
-    [ModelField("b")]
     public FieldElement a;
+    [ModelField("b")]
+    public FieldElement b;
 
     private void Start()
     {
-        if (DojoEntitiesStatic.currentRoundId != null)
+        if (DojoEntitiesStorage.currentCombatId != null)
         {
-            if (DojoEntitiesStatic.currentRoundId.Hex() == roundId.Hex())
+            if (DojoEntitiesStorage.currentCombatId.Hex() == roundId.Hex())
             {
-                DojoEntitiesStatic.twoHashesCurrentGame = this;
+                DojoEntitiesStorage.twoHashesCurrentGame = this;
+            }
+        }
+
+        if (DojoEntitiesStorage.currentCombatId == null)
+        {
+            return;
+        }
+
+        if (DojoEntitiesStorage.currentCombatId.Hex() == roundId.Hex())
+        {
+            DojoEntitiesStorage.twoHashesCurrentGame = this;
+
+            if (UiReferencesStatic.battlePageBehaviour != null)
+            {
+                UiReferencesStatic.battlePageBehaviour.CallFromDataToUpdate();
             }
         }
     }
@@ -27,5 +42,20 @@ public class TwoHashes : ModelInstance
     public override void OnUpdate(Model model)
     {
         base.OnUpdate(model);
+         
+        if (DojoEntitiesStorage.currentCombatId == null)
+        {
+            return;
+        }
+
+        if (DojoEntitiesStorage.currentCombatId.Hex() != roundId.Hex())
+        {
+            return;
+        }
+
+        if (UiReferencesStatic.battlePageBehaviour != null)
+        {
+            UiReferencesStatic.battlePageBehaviour.CallFromDataToUpdate();
+        }
     }
 }
