@@ -25546,6 +25546,17 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1617217584}
   m_CullTransparentMesh: 1
+--- !u!114 &1628305760 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 4867271154530335481, guid: e2c94ddc3de483e43ad17d0bc19495cb, type: 3}
+  m_PrefabInstance: {fileID: 1975078767}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1642768610
 GameObject:
   m_ObjectHideFlags: 0
@@ -29934,6 +29945,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: ChooseBlobertCardLeft
       objectReference: {fileID: 0}
+    - target: {fileID: 1128193398444814774, guid: e2c94ddc3de483e43ad17d0bc19495cb, type: 3}
+      propertyPath: _blobertPicArmour
+      value: 
+      objectReference: {fileID: 1628305760}
     - target: {fileID: 5196722117711960398, guid: e2c94ddc3de483e43ad17d0bc19495cb, type: 3}
       propertyPath: m_AnchorMax.y
       value: 1
