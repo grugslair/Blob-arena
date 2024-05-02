@@ -40,7 +40,6 @@ mod test {
             stats_b.speed,
             stats_b.strength
         );
-
         // let stats_a = Stats { attack: 10, defense: 20, speed: 20, strength: 20, };
         // let stats_b = Stats { attack: 0, defense: 0, speed: 0, strength: 0, };
         let mut n: u8 = 0;
@@ -50,7 +49,7 @@ mod test {
             loop {
                 let move_b: Move = m.into();
                 let outcome = get_outcome(move_a, move_b);
-                let (damage_a, damage_b) = calculate_damage(stats_a, stats_b, outcome);
+                let (damage_a, damage_b) = calculate_damage(stats_a, outcome);
 
                 println!(
                     "a: {} \t{}\tb: {} \t{}\tresult: {} ",
