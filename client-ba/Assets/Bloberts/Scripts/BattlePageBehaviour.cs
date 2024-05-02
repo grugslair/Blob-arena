@@ -364,8 +364,6 @@ public class BattlePageBehaviour : Menu
         return false;
     }
 
-
-
     public async void CallToCommit(int action)
     {
         try

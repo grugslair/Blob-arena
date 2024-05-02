@@ -34,12 +34,7 @@ public class CreateLobbyBehavior : Menu
 
         addressText.text = DojoEntitiesStorage.currentAccount.Address.Hex();
 
-        blobertCardData.SetBicepText(blobert.dojoStats.strength.ToString());
-        blobertCardData.SetShoesText(blobert.dojoStats.speed.ToString());
-        blobertCardData.SetSwordValue(blobert.dojoStats.attack.ToString());
-        blobertCardData.SetShieldText(blobert.dojoStats.defense.ToString());
-
-        idText.text = $"ID: {BlobertUtils.HexToBigInt(blobert.dojoBlobertId.Hex())}";
+        blobertCardData.SetBlobertData(blobert.dojoBlobertId);
 
         CheckForActiveRequest();
     }

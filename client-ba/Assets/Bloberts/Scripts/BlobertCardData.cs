@@ -6,7 +6,11 @@ using UnityEngine.UI;
 public class BlobertCardData : MonoBehaviour
 {
     [SerializeField] RawImage _blobertBackground;
-    [SerializeField] RawImage _blobertPic;
+
+    [SerializeField] Image _blobertPicArmour;
+    [SerializeField] Image _blobertPicMask;
+    [SerializeField] Image _blobertPicJewelry;
+    [SerializeField] Image _blobertPicWeapon;
 
     [SerializeField] TMP_Text _swordValueText;
     [SerializeField] TMP_Text _bicepValueText;
@@ -30,6 +34,41 @@ public class BlobertCardData : MonoBehaviour
         SetShoesText(blobert.dojoStats.speed.ToString());
 
         SetBlobertId();
+        SetUpTraitPicture();
+    }
+
+    public void SetUpTraitPicture()
+    {
+        Debug.Log("its getting here");
+
+        var armour = Resources.Load<Texture2D>($"Traits/armour/{BlobertUtils.TraitArmourToFileName(blobert.dojoTraits.armour)}");
+        var mask = Resources.Load<Texture2D>($"Traits/masks/{BlobertUtils.TraitMaskToFileName(blobert.dojoTraits.mask)}");
+        var jewelry = Resources.Load<Texture2D>($"Traits/jewelry/{BlobertUtils.TraitJewelryToFileName(blobert.dojoTraits.jewelry)}");
+        var weapon = Resources.Load<Texture2D>($"Traits/weapons/{BlobertUtils.TraitWeaponToFileName(blobert.dojoTraits.weapon)}");
+
+        if (armour != null)
+        {
+            Debug.Log("getting here 1");
+            _blobertPicArmour.sprite = Sprite.Create(armour, new Rect(0, 0, armour.width, armour.height), new Vector2(0.5f, 0.5f));
+        }
+
+        if (mask != null)
+        {
+            Debug.Log("getting here 2");
+            _blobertPicMask.sprite = Sprite.Create(mask, new Rect(0, 0, mask.width, mask.height), new Vector2(0.5f, 0.5f));
+        }
+
+        if (jewelry != null)
+        {
+            Debug.Log("getting here 3");
+            _blobertPicJewelry.sprite = Sprite.Create(jewelry, new Rect(0, 0, jewelry.width, jewelry.height), new Vector2(0.5f, 0.5f));
+        }
+
+        if (weapon != null)
+        {
+            Debug.Log("getting here 4");
+            _blobertPicWeapon.sprite = Sprite.Create(weapon, new Rect(0, 0, weapon.width, weapon.height), new Vector2(0.5f, 0.5f));
+        }
     }
 
     public void SetSwordValue(string text)
@@ -50,11 +89,6 @@ public class BlobertCardData : MonoBehaviour
     public void SetShoesText(string text)
     {
         _shieldValueText.text = text;
-    }
-
-    public void SetBlobertPic(Texture2D texture)
-    {
-        _blobertPic.texture = texture;
     }
 
     public void SetBlobertId()
