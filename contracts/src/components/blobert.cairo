@@ -1,10 +1,11 @@
 use core::traits::TryInto;
 use starknet::ContractAddress;
+use core::fmt::{Display, Formatter, Error};
 
 use blob_arena::components::{
     stats::{Stats, StatsTrait}, background::{Background, BACKGROUND_COUNT},
     armour::{Armour, ARMOUR_COUNT}, mask::{Mask, MASK_COUNT}, jewelry::{Jewelry, JEWELRY_COUNT},
-    weapon::{Weapon, WEAPON_COUNT},
+    weapon::{Weapon, WEAPON_COUNT}, utils::DisplayImplT,
 };
 
 #[derive(Model, Copy, Drop, Print, Serde)]
@@ -24,6 +25,18 @@ struct Traits {
     jewelry: Jewelry,
     weapon: Weapon,
 }
+impl OutcomeIntoByteArray of Into<Traits, ByteArray> {
+    fn into(self: Traits) -> ByteArray {
+        let background: ByteArray = self.background.into();
+        let armour: ByteArray = self.armour.into();
+        let mask: ByteArray = self.mask.into();
+        let jewelry: ByteArray = self.jewelry.into();
+        let weapon: ByteArray = self.weapon.into();
+        format!("{} Background, {} Mask, {}, {}, {}", background, armour, mask, jewelry, weapon)
+    }
+}
+impl DisplayImplTraits = DisplayImplT<Traits>;
+
 
 fn calculate_stats(traits: Traits) -> Stats {
     let Traits { background, armour, mask, jewelry, weapon, } = traits;

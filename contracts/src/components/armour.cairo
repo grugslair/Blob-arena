@@ -94,6 +94,31 @@ impl U8IntoArmour of Into<u8, Armour> {
 }
 
 
+impl ArmourIntoByteArray of Into<Armour, ByteArray> {
+    fn into(self: Armour) -> ByteArray {
+        match self {
+            Armour::SheepsWool => "SheepsWool",
+            Armour::Kigurumi => "Kigurumi",
+            Armour::DivineRobeDark => "DivineRobeDark",
+            Armour::DivineRobe => "DivineRobe",
+            Armour::DojoRobe => "DojoRobe",
+            Armour::HolyChestplate => "HolyChestplate",
+            Armour::DemonHusk => "DemonHusk",
+            Armour::LeatherArmour => "LeatherArmour",
+            Armour::LeopardSkin => "LeopardSkin",
+            Armour::LinenRobe => "LinenRobe",
+            Armour::LordsArmor => "LordsArmor",
+            Armour::SecretTattoo => "SecretTattoo",
+            Armour::Chainmail => "Chainmail",
+            Armour::Suit => "Suit",
+            Armour::Underpants => "Underpants",
+            Armour::WenShirt => "WenShirt",
+            Armour::WsbTankTop => "WsbTankTop",
+        }
+    }
+}
+
+
 impl SU8IntoArmour of Into<@u8, Armour> {
     fn into(self: @u8) -> Armour {
         (*self).into()

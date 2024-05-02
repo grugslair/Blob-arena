@@ -24,22 +24,26 @@ mod test {
             mask: Mask::Milady,
             weapon: Weapon::Balloons,
         };
+        println!("A Traits: {}", traits_a);
+        println!("B Traits: {}", traits_b);
         let stats_a = calculate_stats(traits_a);
         let stats_b = calculate_stats(traits_b);
-        println!(
-            "a Stats: attack: {} defense: {} speed: {} strength: {}",
-            stats_a.attack,
-            stats_a.defense,
-            stats_a.speed,
-            stats_a.strength
-        );
-        println!(
-            "b Stats: attack: {} defense: {} speed: {} strength: {}",
-            stats_b.attack,
-            stats_b.defense,
-            stats_b.speed,
-            stats_b.strength
-        );
+        println!("A Stats: {}", stats_a);
+        println!("B Stats: {}", stats_b);
+        // println!(
+        //     "a Stats: attack: {} defense: {} speed: {} strength: {}",
+        //     stats_a.attack,
+        //     stats_a.defense,
+        //     stats_a.speed,
+        //     stats_a.strength
+        // );
+        // println!(
+        //     "b Stats: attack: {} defense: {} speed: {} strength: {}",
+        //     stats_b.attack,
+        //     stats_b.defense,
+        //     stats_b.speed,
+        //     stats_b.strength
+        // );
         // let stats_a = Stats { attack: 10, defense: 20, speed: 20, strength: 20, };
         // let stats_b = Stats { attack: 0, defense: 0, speed: 0, strength: 0, };
         let mut n: u8 = 0;

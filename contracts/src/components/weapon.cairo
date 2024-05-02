@@ -202,6 +202,56 @@ impl U8IntoWeapon of Into<u8, Weapon> {
     }
 }
 
+impl WeaponIntoByteArray of Into<Weapon, ByteArray> {
+    fn into(self: Weapon) -> ByteArray {
+        match self {
+            Weapon::AlgorithmicAegis => "AlgorithmicAegis",
+            Weapon::ArgentShield => "ArgentShield",
+            Weapon::Balloons => "Balloons",
+            Weapon::BannerOfAnger => "BannerOfAnger",
+            Weapon::BannerOfBrilliance => "BannerOfBrilliance",
+            Weapon::BannerOfDetection => "BannerOfDetection",
+            Weapon::BannerOfEnlightenment => "BannerOfEnlightenment",
+            Weapon::BannerOfFury => "BannerOfFury",
+            Weapon::BannerOfGiants => "BannerOfGiants",
+            Weapon::BannerOfPerfection => "BannerOfPerfection",
+            Weapon::BannerOfPower => "BannerOfPower",
+            Weapon::BannerOfProtection => "BannerOfProtection",
+            Weapon::BannerOfRage => "BannerOfRage",
+            Weapon::BannerOfReflection => "BannerOfReflection",
+            Weapon::BannerOfSkill => "BannerOfSkill",
+            Weapon::BannerOfTheFox => "BannerOfTheFox",
+            Weapon::BannerOfTheTwins => "BannerOfTheTwins",
+            Weapon::BannerOfTitans => "BannerOfTitans",
+            Weapon::BannerOfTonyHawk => "BannerOfTonyHawk",
+            Weapon::BannerOfVitriol => "BannerOfVitriol",
+            Weapon::Banner => "Banner",
+            Weapon::Briq => "Briq",
+            Weapon::Calculator => "Calculator",
+            Weapon::DevvingForTheDistracted => "DevvingForTheDistracted",
+            Weapon::DiamondHands => "DiamondHands",
+            Weapon::DopeUzi => "DopeUzi",
+            Weapon::GhostWand => "GhostWand",
+            Weapon::Grimoire => "Grimoire",
+            Weapon::GrugsClub => "GrugsClub",
+            Weapon::JediswapSaber => "JediswapSaber",
+            Weapon::Katana => "Katana",
+            Weapon::LordsBanner => "LordsBanner",
+            Weapon::LsHasNoChill => "LsHasNoChill",
+            Weapon::Mandolin => "Mandolin",
+            Weapon::SignIso => "SignIso",
+            Weapon::SignatureBanner => "SignatureBanner",
+            Weapon::SithswapSaber => "SithswapSaber",
+            Weapon::Spaghetti => "Spaghetti",
+            Weapon::Squid => "Squid",
+            Weapon::StarkMagic => "StarkMagic",
+            Weapon::StarkShield => "StarkShield",
+            Weapon::Stool => "Stool",
+            Weapon::Warhammer => "Warhammer",
+        }
+    }
+}
+
 impl SU8IntoWeapon of Into<@u8, Weapon> {
     fn into(self: @u8) -> Weapon {
         (*self).into()

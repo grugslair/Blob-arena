@@ -1,4 +1,6 @@
 use core::option::OptionTrait;
+use core::fmt::{Display, Formatter, Error};
+
 #[derive(Copy, Drop, Print, Serde, SerdeLen, Introspect)]
 struct Stats {
     attack: u8,
@@ -23,6 +25,19 @@ impl TIntoStats<T, +TryInto<T, u8>> of Into<T, Stats> {
     }
 }
 
+impl DisplayImplT of Display<Stats> {
+    fn fmt(self: @Stats, ref f: Formatter) -> Result<(), Error> {
+        let str: ByteArray = format!(
+            "attack: {}, defense: {}, speed: {}, strength: {}",
+            self.attack,
+            self.defense,
+            self.speed,
+            self.strength
+        );
+        f.buffer.append(@str);
+        Result::Ok(())
+    }
+}
 
 impl StatsAdd of Add<Stats> {
     fn add(lhs: Stats, rhs: Stats) -> Stats {
