@@ -49,10 +49,10 @@ impl StatsMul of Mul<Stats> {
 impl StatsDiv of Div<Stats> {
     fn div(lhs: Stats, rhs: Stats) -> Stats {
         return Stats {
-            attack: lhs.attack * rhs.attack,
-            defense: lhs.defense * rhs.defense,
-            speed: lhs.speed * rhs.speed,
-            strength: lhs.strength * rhs.strength,
+            attack: lhs.attack / rhs.attack,
+            defense: lhs.defense / rhs.defense,
+            speed: lhs.speed / rhs.speed,
+            strength: lhs.strength / rhs.strength,
         };
     }
 }

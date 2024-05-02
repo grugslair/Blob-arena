@@ -41,7 +41,7 @@ impl ChallengeImpl of ChallengeSystemTrait {
         challenge_id
     }
 
-    fn close_challenge_invite(self: World, challenge_id: u128) {
+    fn rescind_challenge_invite(self: World, challenge_id: u128) {
         let caller = get_caller_address();
         let mut challenge = self.get_open_challenge(challenge_id);
         assert(challenge.sender == caller, 'Not the sender');
@@ -54,13 +54,14 @@ impl ChallengeImpl of ChallengeSystemTrait {
         let caller = get_caller_address();
         let mut challenge = self.get_open_challenge(challenge_id);
         assert(challenge.receiver == caller, 'Not the receiver');
+        assert(!challenge.response_open, 'Already responded');
         self.assert_blobert_owner(blobert_id, caller);
         challenge.receiver_blobert = blobert_id;
         challenge.response_open = true;
         set!(self, (challenge.response(),));
     }
 
-    fn close_challenge_response(self: World, challenge_id: u128) {
+    fn rescind_challenge_response(self: World, challenge_id: u128) {
         let caller = get_caller_address();
         let mut challenge = self.get_open_challenge(challenge_id);
         assert(challenge.receiver == caller, 'Not the receiver');
@@ -75,15 +76,6 @@ impl ChallengeImpl of ChallengeSystemTrait {
         assert(challenge.receiver == caller, 'Not the receiver');
         challenge.invite_open = false;
         set!(self, (challenge.invite(),));
-    }
-
-    fn reject_challenge_response(self: World, challenge_id: u128) {
-        let caller = get_caller_address();
-        let mut challenge = self.get_open_challenge(challenge_id);
-        assert(challenge.sender == caller, 'Not the sender');
-        assert(challenge.response_open, 'Response already closed');
-        challenge.response_open = false;
-        set!(self, (challenge.response(),));
     }
 
     fn accept_challenge_response(self: World, challenge_id: u128) -> u128 {
@@ -101,5 +93,14 @@ impl ChallengeImpl of ChallengeSystemTrait {
             );
         set!(self, (challenge.response(),));
         challenge.combat_id
+    }
+
+    fn reject_challenge_response(self: World, challenge_id: u128) {
+        let caller = get_caller_address();
+        let mut challenge = self.get_open_challenge(challenge_id);
+        assert(challenge.sender == caller, 'Not the sender');
+        assert(challenge.response_open, 'Response already closed');
+        challenge.response_open = false;
+        set!(self, (challenge.response(),));
     }
 }
