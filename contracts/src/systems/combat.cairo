@@ -17,17 +17,18 @@ fn calculate_win_damage(attacker: Stats, defender: Stats, winning_mode: Move) ->
         Move::Counter => (attacker.speed, defender.strength),
         Move::Rush => (attacker.speed, defender.speed),
     }.into();
-    let damage_u16 = (attacker.attack.into() + 20)
-        + (attacker_var + 20) * 2 / (defender.defense.into() + defender_var + 20);
+    let damage_u16 = (attacker.attack.into() + 30)
+        * (attacker_var + 60)
+        / (defender.defense.into() + defender_var + 100);
     damage_u16.try_into().unwrap()
 }
 
 fn calculate_draw_damage(attacker: Stats, defender: Stats, mode: Move) -> u8 {
     let (attack, defence): (u16, u16) = (attacker.attack, defender.defense).into();
     match mode {
-        Move::Beat => (attack + 10) * (attacker.strength.into() + 20) / (defence + 20),
-        Move::Counter => 0,
-        Move::Rush => (attack + 10) * (attacker.speed.into() + 20) / (defence + 20),
+        Move::Beat => (attack + 20) * (attacker.strength.into() + 30) / (defence + 80),
+        Move::Counter => 20,
+        Move::Rush => (attack + 20) * (attacker.speed.into() + 30) / (defence + 80),
     }.try_into().unwrap()
 }
 
