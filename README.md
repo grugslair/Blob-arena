@@ -57,7 +57,7 @@ The damage is calculated using both players stats and the combination of moves
 
 The damage is calculated with:
 ```math
-    Damage=(attack_attacker + 30) * (mod_attacker + 60) / (defence_defender + mod_defender + 100)
+    Damage=(attack_{attacker} + 30) * (mod_{attacker} + 60) / (defence_{defender} + mod_{defender} + 100)
 ```
 Where mod attacker and mod defender are dependant on the winning move:
  - Beat: attackers strength, defenders strength
