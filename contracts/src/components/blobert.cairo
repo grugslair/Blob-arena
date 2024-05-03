@@ -32,7 +32,7 @@ impl OutcomeIntoByteArray of Into<Traits, ByteArray> {
         let mask: ByteArray = self.mask.into();
         let jewelry: ByteArray = self.jewelry.into();
         let weapon: ByteArray = self.weapon.into();
-        format!("{} Background, {} Mask, {}, {}, {}", background, armour, mask, jewelry, weapon)
+        format!("{} Mask, {}, {}, {}, {} Background", mask, jewelry, armour, weapon, background)
     }
 }
 impl DisplayImplTraits = DisplayImplT<Traits>;

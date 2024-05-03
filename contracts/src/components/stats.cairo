@@ -28,7 +28,7 @@ impl TIntoStats<T, +TryInto<T, u8>> of Into<T, Stats> {
 impl DisplayImplT of Display<Stats> {
     fn fmt(self: @Stats, ref f: Formatter) -> Result<(), Error> {
         let str: ByteArray = format!(
-            "attack: {}, defense: {}, speed: {}, strength: {}",
+            "attack: {},\tdefense: {},\tspeed: {},\tstrength: {}",
             self.attack,
             self.defense,
             self.speed,
