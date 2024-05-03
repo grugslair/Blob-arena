@@ -1,5 +1,8 @@
+use core::box::BoxTrait;
+use core::hash::HashStateTrait;
+use core::poseidon::{PoseidonTrait, HashState};
 use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
-use starknet::{ContractAddress, get_contract_address};
+use starknet::{ContractAddress, get_contract_address, get_caller_address, get_tx_info};
 
 
 fn uuid(world: IWorldDispatcher) -> u128 {
@@ -39,4 +42,13 @@ impl RandomImpl of RandomTrait {
         let seed: u256 = self.next_seed().into();
         (seed % cap.into()).try_into().unwrap()
     }
+}
+
+
+fn get_uuid(self: IWorldDispatcher) -> u128 {
+    let hash_felt = PoseidonTrait::new()
+        .update(get_tx_info().unbox().transaction_hash)
+        .update(self.uuid().into())
+        .finalize();
+    (hash_felt.into() & 0xffffffffffffffffffffffffffffffff_u256).try_into().unwrap()
 }

@@ -1,10 +1,16 @@
+use blob_arena::components::challenge::ChallengeScoreTrait;
+use blob_arena::components::knockout::HealthsTrait;
+use core::option::OptionTrait;
 use starknet::{ContractAddress, get_caller_address};
 use dojo::world::{IWorldDispatcherTrait};
 use blob_arena::{
     components::{
         blobert::BlobertTrait,
-        challenge::{ChallengeInvite, ChallengeResponse, Challenge, make_challenge, ChallengeTrait},
-        world::{World}
+        challenge::{
+            ChallengeInvite, ChallengeResponse, Challenge, make_challenge, ChallengeTrait,
+            ChallengeScore
+        },
+        combat::{Move, TwoMovesTrait}, world::{World}, utils::Status,
     },
     systems::{blobert::BlobertWorldTrait, knockout::{KnockoutGameTrait}}
 };
@@ -23,6 +29,9 @@ impl ChallengeImpl of ChallengeSystemTrait {
         make_challenge(
             self.get_challenge_invite(challenge_id), self.get_challenge_response(challenge_id)
         )
+    }
+    fn get_score(self: World, player: ContractAddress, blobert_id: u128) -> ChallengeScore {
+        get!(self, (player, blobert_id), ChallengeScore)
     }
 
     fn get_open_challenge(self: World, challenge_id: u128) -> Challenge {
@@ -102,5 +111,30 @@ impl ChallengeImpl of ChallengeSystemTrait {
         assert(challenge.response_open, 'Response already closed');
         challenge.response_open = false;
         set!(self, (challenge.response(),));
+    }
+    fn commit_challenge_move(self: World, challenge_id: u128, hash: felt252) {
+        let mut challenge = self.get_open_challenge(challenge_id);
+        let combat_id = challenge.combat_id;
+        let game = self.get_knockout_game(combat_id);
+        game.commit_move(hash)
+    }
+    fn reveal_challenge_move(self: World, challenge_id: u128, move: Move, salt: felt252) {
+        let mut challenge = self.get_open_challenge(challenge_id);
+        let combat_id = challenge.combat_id;
+        let game = self.get_knockout_game(combat_id);
+        game.reveal_move(move, salt);
+        let status = game.get_status();
+        match status {
+            Status::Finished(winner) => {
+                let (w_player, w_blobert) = challenge.get_player_and_blobert(winner.into());
+                let (l_player, l_blobert) = challenge.get_player_and_blobert(!(winner.into()));
+                let mut w_score = self.get_score(w_player, w_blobert);
+                let mut l_score = self.get_score(l_player, l_blobert);
+                w_score.win();
+                l_score.lose();
+                set!(self, (w_score, l_score));
+            },
+            _ => {},
+        }
     }
 }

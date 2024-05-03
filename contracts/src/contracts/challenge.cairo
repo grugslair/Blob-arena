@@ -1,4 +1,5 @@
 use starknet::ContractAddress;
+use blob_arena::components::combat::Move;
 #[starknet::interface]
 trait IChallengeActions<TContractState> {
     fn send_invite(self: @TContractState, receiver: ContractAddress, blobert_id: u128) -> u128;
@@ -8,12 +9,16 @@ trait IChallengeActions<TContractState> {
     fn reject_invite(self: @TContractState, challenge_id: u128);
     fn reject_response(self: @TContractState, challenge_id: u128);
     fn accept_response(self: @TContractState, challenge_id: u128) -> u128;
+    fn commit(self: @TContractState, challenge_id: u128, hash: felt252);
+    fn reveal(self: @TContractState, challenge_id: u128, move: Move, salt: felt252);
 }
 #[dojo::contract]
 mod challenge_actions {
     use super::IChallengeActions;
     use starknet::ContractAddress;
-    use blob_arena::{components::world::World, systems::challenge::ChallengeSystemTrait};
+    use blob_arena::{
+        components::{combat::Move, world::World}, systems::challenge::ChallengeSystemTrait,
+    };
     #[abi(embed_v0)]
     impl ChallengeActionsImpl of IChallengeActions<ContractState> {
         fn send_invite(self: @ContractState, receiver: ContractAddress, blobert_id: u128) -> u128 {
@@ -36,6 +41,12 @@ mod challenge_actions {
         }
         fn accept_response(self: @ContractState, challenge_id: u128) -> u128 {
             self.get_world().accept_challenge_response(challenge_id)
+        }
+        fn commit(self: @ContractState, challenge_id: u128, hash: felt252) {
+            self.get_world().commit_challenge_move(challenge_id, hash);
+        }
+        fn reveal(self: @ContractState, challenge_id: u128, move: Move, salt: felt252) {
+            self.get_world().reveal_challenge_move(challenge_id, move, salt);
         }
     }
     #[generate_trait]

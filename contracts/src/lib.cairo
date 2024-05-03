@@ -11,21 +11,17 @@ mod components {
     mod world;
     mod knockout;
     mod stake;
-    // mod lobby;
     mod challenge;
 }
 mod systems {
     mod combat;
     mod knockout;
     mod blobert;
-    // mod lobby;
     mod challenge;
 }
 
 mod contracts {
-    mod knockout;
     mod blobert;
-    // mod lobby;
     mod challenge;
 }
 mod constants;
