@@ -31,69 +31,61 @@ After players mint a Bloberts, grumpy yet fierce creatures, each boasting unique
 
 Characters: Bloberts
 
-Each Blobert character comes with a set of four primary attributes: Attack, Defence, Speed, and Strength. These attributes, which range from 1-5, significantly impact the combat mechanics.
+## Stats
+Each Blobert has 4 stats Attack, Defence, Strength, and Speed. These attributes, which range from 1 to 20 (10 for attack), significantly impact the combat mechanics. The stats are based on the Bloberts Traits
 
-* Attack: Determines the damage a Blobert can inflict with its moves.
-* Defense: Reduces the amount of damage a Blobert receives from opponents' attacks.
-* Speed: Decides which Blobert acts first in a battle.
-* Strength: Multiplier for both the Attacker’s Attack or the Defender’s Defence.
+## Traits
+A Blobert consists of 5 Traits
+ - [Mask](./contracts/src/components/mask.cairo)
+ - [Jewelry](./contracts/src/components/jewelry.cairo)
+ - [Weapon](./contracts/src/components/weapon.cairo)
+ - [Armour](./contracts/src/components/armour.cairo)
+ - [Background](./contracts/src/components/background.cairo)
 
-## Combat Mechanics
+
+
+## Combat
 Bloberts have access to three combat moves:
 
 * Beat: A powerful attack that can crush a Counter strategy.
-
 * Rush: A swift move that outpaces and defeats Beat.
-
 * Counter: A strategic defense that turns the tables on Rush.
 
-### Two-Phase Combat System
+In the case of a winner only the looser will take damage. 
+In a draw both or neither players take damage. 
+The damage is calculated using both players stats and the combination of moves 
 
-![5_phrase](https://github.com/GrugLikesRocks/Blob-arena/assets/92889945/c8707c72-f8b5-40d4-91ab-e0346f092c2f)
+The damage is calculated with:
+```math
+    Damage=(attack_{attacker} + 30) * (mod_{attacker} + 60) / (defence_{defender} + mod_{defender} + 100)
+```
+Where mod attacker and mod defender are dependant on the winning move:
+ - Beat: attackers strength, defenders strength
+ - Counter: attackers speed, defenders strength
+ - Rush: attackers speed, defenders speed
 
-#### Phase 1: Rock-Paper-Scissors Logic
+In the case of a draw the damage for both players is:
+- Beat: (attackers attack + 20) * (attacker strength + 30) / (defenders defence + 80)
+- Counter: 20
+- Rush: (attackers attack + 20) * (attacker speed + 30) / (defenders defence + 80)
 
-* Beat, Rush, and Counter are the three moves available, with each having an inherent advantage over another:
-  
-   - Rush > Beat
-   - Beat > Counter
-   - Counter > Rush
+## Single player knockout
+1. Players both commit to move by sending a salted has of the index of there move
+2. Players both reveal there moves by sending the move and salt that match with the hash
+3. When the second player reveals there move the round is run 
 
-The outcome of this phase determines the base result of the encounter, essentially who has the upper hand before attributes are applied.
-
-Players commit their choices without revealing them, ensuring a fair game. Once both players have committed, the reveal phase follows, determining the winner based on the choices made.
-
-#### Phase 2: Attribute Modifier Application
-
-After establishing the initial advantage based on the rock-paper-scissors mechanic, the outcome is then adjusted by applying a multiplier derived from the Bloberts' attributes. This multiplier reflects the nuanced differences between each Blobert, considering their Attack, Strength, Defence, and Speed.
-
-* Winning Mode Influence:
-  
-   - Beat: Uses both characters' strength.
-   - Counter: Combines attacker's speed with defender's strength.
-   - Rush: Utilizes both characters' speed.
- 
-* Damage Calculation: 
-
-  - The formula now incorporates defender_var directly from the matched move and attacker_var for adding depth to the attacker’s capability influence:
-
-` Damage = (attacker.attack + 10) * 2 / (defender.defense + defender_var) * (attacker_var + 10) `
-
-* RPS Draw:
-
-   - Beat and Rush: The calculations are similar but factor in the attacker's strength for Beat and speed for Rush against the defender's defense.
-     - Formula:
-
-      ` Damage = (attacker.attack + 10) * 2 / (defender.defense + defender_var) * (attacker_var + 10) `
-
-     - Where specific_stat is either strength (Beat) or speed (Rush).
-   - Counter: Results in no damage being dealt, indicating a complete stalemate in this mode.
-
-### Final Outcome Calculation
-
-The final outcome of the battle takes the initial rock-paper-scissors result and applies the attribute multiplier to adjust the advantage. This can determine the extent of victory or mitigate a loss, depending on the multiplier's final value.
-
-` Final Outcome = Initial RPS Outcome × Multiplier `
+## Creating a Challenge / Lobby
+```mermaid
+    graph TB
+        A[P1:🚫 P2:🚫]--P1 Sends Invite-->B[P1:✅ P2:🚫]
+        B--P2 Responds to Invite-->C[P1:✅ P2:✅]
+        B--P2 Rejects Invite-->A
+        B--P1 Rescinds Invite-->A
+        C--P1 Accepts Response-->D[Challenge starts]
+        C--P1 Rejects Response-->B
+        C--P2 Rescinds Response-->B
+        C--P1 Rescinds Invite-->A      
+```
 
 ## Winning and Progression
 
