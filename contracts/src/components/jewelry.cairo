@@ -62,3 +62,18 @@ impl StatsU8IntoJewelry of Into<@u8, Jewelry> {
         (*self).into()
     }
 }
+
+impl JewelryIntoByteArray of Into<Jewelry, ByteArray> {
+    fn into(self: Jewelry) -> ByteArray {
+        match self {
+            Jewelry::Amulet => "Amulet",
+            Jewelry::BronzeRing => "BronzeRing",
+            Jewelry::GoldRing => "GoldRing",
+            Jewelry::Necklace => "Necklace",
+            Jewelry::Pendant => "Pendant",
+            Jewelry::PlatinumRing => "PlatinumRing",
+            Jewelry::SilverRing => "SilverRing",
+            Jewelry::TitaniumRing => "TitaniumRing",
+        }
+    }
+}

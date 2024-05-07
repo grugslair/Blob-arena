@@ -93,3 +93,22 @@ impl SU8IntoBackground of Into<@u8, Background> {
         }
     }
 }
+
+impl BackgroundIntoByteArray of Into<Background, ByteArray> {
+    fn into(self: Background) -> ByteArray {
+        match self {
+            Background::AvnuBlue => "AvnuBlue",
+            Background::Blue => "Blue",
+            Background::CryptsAndCaverns => "CryptsAndCaverns",
+            Background::FibrousFrame => "FibrousFrame",
+            Background::Green => "Green",
+            Background::Holo => "Holo",
+            Background::Orange => "Orange",
+            Background::Purple => "Purple",
+            Background::RealmsDark => "RealmsDark",
+            Background::Realms => "Realms",
+            Background::Terraforms => "Terraforms",
+            Background::Tulip => "Tulip",
+        }
+    }
+}

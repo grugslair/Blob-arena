@@ -1,6 +1,6 @@
 use core::fmt::{Display, Formatter, Error};
 use starknet::ContractAddress;
-use blob_arena::{constants::U64_MASK_U256, components::utils::{AB, Status, Winner}};
+use blob_arena::{constants::U64_MASK_U256, components::utils::{AB, Status, Winner, DisplayImplT}};
 
 
 #[derive(Copy, Drop, Print, Serde, SerdeLen, PartialEq, Introspect)]
@@ -195,15 +195,6 @@ impl OutcomeIntoByteArray of Into<Outcome, ByteArray> {
         let result: ByteArray = self.result.into();
         let move: ByteArray = self.move.into();
         format!("{} with move {}", result, move)
-    }
-}
-
-
-impl DisplayImplT<T, +Into<T, ByteArray>, +Copy<T>> of Display<T> {
-    fn fmt(self: @T, ref f: Formatter) -> Result<(), Error> {
-        let str: ByteArray = (*self).into();
-        f.buffer.append(@str);
-        Result::Ok(())
     }
 }
 

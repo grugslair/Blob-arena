@@ -135,3 +135,37 @@ impl SU8IntoMask of Into<@u8, Mask> {
         (*self).into()
     }
 }
+
+
+impl MaskIntoByteArray of Into<Mask, ByteArray> {
+    fn into(self: Mask) -> ByteArray {
+        match self {
+            Mask::Blobert => "Blobert",
+            Mask::Doge => "Doge",
+            Mask::Dojo => "Dojo",
+            Mask::Ducks => "Ducks",
+            Mask::Kevin => "Kevin",
+            Mask::Milady => "Milady",
+            Mask::Pepe => "Pepe",
+            Mask::Pudgy => "Pudgy",
+            Mask::_3dGlasses => "_3dGlasses",
+            Mask::_1337Skulls => "_1337Skulls",
+            Mask::AncientHelm => "AncientHelm",
+            Mask::Bane => "Bane",
+            Mask::BraavosHelm => "BraavosHelm",
+            Mask::Bulbhead => "Bulbhead",
+            Mask::DealWithItGlasses => "DealWithItGlasses",
+            Mask::DemonCrown => "DemonCrown",
+            Mask::DivineHood => "DivineHood",
+            Mask::Ekubo => "Ekubo",
+            Mask::HyperlootCrown => "HyperlootCrown",
+            Mask::InfluenceHelmet => "InfluenceHelmet",
+            Mask::LordsHelm => "LordsHelm",
+            Mask::Nostrahat => "Nostrahat",
+            Mask::NounsGlasses => "NounsGlasses",
+            Mask::PopeHat => "PopeHat",
+            Mask::TaprootWizardHat => "TaprootWizardHat",
+            Mask::WifHat => "WifHat",
+        }
+    }
+}

@@ -1,10 +1,11 @@
 use core::traits::TryInto;
 use starknet::ContractAddress;
+use core::fmt::{Display, Formatter, Error};
 
 use blob_arena::components::{
     stats::{Stats, StatsTrait}, background::{Background, BACKGROUND_COUNT},
     armour::{Armour, ARMOUR_COUNT}, mask::{Mask, MASK_COUNT}, jewelry::{Jewelry, JEWELRY_COUNT},
-    weapon::{Weapon, WEAPON_COUNT},
+    weapon::{Weapon, WEAPON_COUNT}, utils::DisplayImplT,
 };
 
 #[derive(Model, Copy, Drop, Print, Serde)]
@@ -24,15 +25,26 @@ struct Traits {
     jewelry: Jewelry,
     weapon: Weapon,
 }
+impl OutcomeIntoByteArray of Into<Traits, ByteArray> {
+    fn into(self: Traits) -> ByteArray {
+        let background: ByteArray = self.background.into();
+        let armour: ByteArray = self.armour.into();
+        let mask: ByteArray = self.mask.into();
+        let jewelry: ByteArray = self.jewelry.into();
+        let weapon: ByteArray = self.weapon.into();
+        format!("{} Mask, {}, {}, {}, {} Background", mask, jewelry, armour, weapon, background)
+    }
+}
+impl DisplayImplTraits = DisplayImplT<Traits>;
+
 
 fn calculate_stats(traits: Traits) -> Stats {
     let Traits { background, armour, mask, jewelry, weapon, } = traits;
     let (b_stats, a_stats, m_stats, j_stats, mut w_stats) = (
         background.stats(), armour.stats(), mask.stats(), jewelry.stats(), weapon.stats()
     );
-    let s_mod = Stats { attack: 1, defense: 2, speed: 2, strength: 2 };
 
-    return (b_stats + j_stats + w_stats + a_stats + m_stats) / s_mod;
+    return (b_stats + j_stats + w_stats + a_stats + m_stats);
 }
 
 fn generate_traits(seed: u256) -> Traits {

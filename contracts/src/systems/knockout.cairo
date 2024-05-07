@@ -24,24 +24,24 @@ struct KnockoutGame {
 
 #[generate_trait]
 impl KnockoutGameImpl of KnockoutGameTrait {
-    fn new(
-        world: World,
+    fn new_knockout(
+        self: World,
         player_a: ContractAddress,
         player_b: ContractAddress,
         blobert_a: u128,
         blobert_b: u128
     ) -> u128 {
-        let combat_id = uuid(world);
-        let _ = (world.get_blobert(blobert_a), world.get_blobert(blobert_b));
+        let combat_id = uuid(self);
+        (self.get_blobert(blobert_a), self.get_blobert(blobert_b));
         let knockout = Knockout { combat_id, player_a, player_b, blobert_a, blobert_b };
         let healths = Healths { combat_id, a: 100, b: 100 };
-        set!(world, (knockout, healths));
+        set!(self, (knockout, healths));
         combat_id
     }
-    fn create(world: World, combat_id: u128) -> KnockoutGame {
-        let model: Knockout = get!(world, combat_id, Knockout);
+    fn get_knockout_game(self: World, combat_id: u128) -> KnockoutGame {
+        let model: Knockout = get!(self, combat_id, Knockout);
         KnockoutGame {
-            world,
+            world: self,
             combat_id,
             player_a: model.player_a,
             player_b: model.player_b,
@@ -117,14 +117,12 @@ impl KnockoutGameImpl of KnockoutGameTrait {
 
         assert(!moves.check_set(player), 'Already revealed');
         assert(reveal.check_hash(commitments.get_hash(player)), 'Hash dose not match');
-
         moves.set_move(player, move);
-
         if moves.check_done() {
             self.verify_round(ref commitments, ref moves);
         } else {
             set!(self.world, (moves,));
-        }
+        };
     }
 
     fn verify_round(self: KnockoutGame, ref commitments: TwoHashes, ref moves: TwoMoves) {

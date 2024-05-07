@@ -1,3 +1,6 @@
+use core::fmt::{Display, Formatter, Error};
+
+
 #[derive(Copy, Drop, Print, Serde, PartialEq)]
 enum AB {
     A,
@@ -52,3 +55,10 @@ impl NotAB of Not<AB> {
     }
 }
 
+impl DisplayImplT<T, +Into<T, ByteArray>, +Copy<T>> of Display<T> {
+    fn fmt(self: @T, ref f: Formatter) -> Result<(), Error> {
+        let str: ByteArray = (*self).into();
+        f.buffer.append(@str);
+        Result::Ok(())
+    }
+}
