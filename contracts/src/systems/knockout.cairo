@@ -119,7 +119,7 @@ impl KnockoutGameImpl of KnockoutGameTrait {
         assert(reveal.check_hash(commitments.get_hash(player)), 'Hash dose not match');
         moves.set_move(player, move);
         if moves.check_done() {
-            self.verify_round(ref commitments, ref moves)
+            self.verify_round(ref commitments, ref moves);
         } else {
             set!(self.world, (moves,));
         };
