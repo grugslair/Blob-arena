@@ -32,4 +32,5 @@ mod constants;
 mod utils;
 mod tests {
     mod combat_test;
+    mod test_contracts;
 }
