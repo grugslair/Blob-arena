@@ -1,6 +1,17 @@
 use starknet::{ContractAddress};
-use blob_arena::{components::{utils::Winner}};
+use blob_arena::{components::{utils::{Winner, AB}}};
 
+#[derive(Model, Copy, Drop, Print, Serde)]
+struct ChallengeScore {
+    #[key]
+    player: ContractAddress,
+    #[key]
+    blobert_id: u128,
+    wins: u64,
+    losses: u64,
+    max_consecutive_wins: u64,
+    current_consecutive_wins: u64,
+}
 
 #[derive(Model, Copy, Drop, Print, Serde)]
 struct ChallengeInvite {
@@ -63,5 +74,26 @@ impl ChallengeImpl of ChallengeTrait {
             open: self.response_open,
             combat_id: self.combat_id,
         }
+    }
+    fn get_player_and_blobert(self: Challenge, ab: AB) -> (ContractAddress, u128) {
+        match ab {
+            AB::A => (self.sender, self.sender_blobert),
+            AB::B => (self.receiver, self.receiver_blobert),
+        }
+    }
+}
+
+#[generate_trait]
+impl ChallengeScoreImpl of ChallengeScoreTrait {
+    fn win(ref self: ChallengeScore) {
+        self.current_consecutive_wins += 1;
+        self.wins += 1;
+        if self.current_consecutive_wins > self.max_consecutive_wins {
+            self.max_consecutive_wins = self.current_consecutive_wins;
+        }
+    }
+    fn lose(ref self: ChallengeScore) {
+        self.current_consecutive_wins = 0;
+        self.losses += 1;
     }
 }
