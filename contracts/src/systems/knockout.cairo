@@ -117,14 +117,12 @@ impl KnockoutGameImpl of KnockoutGameTrait {
 
         assert(!moves.check_set(player), 'Already revealed');
         assert(reveal.check_hash(commitments.get_hash(player)), 'Hash dose not match');
-
         moves.set_move(player, move);
-
         if moves.check_done() {
             self.verify_round(ref commitments, ref moves);
         } else {
             set!(self.world, (moves,));
-        }
+        };
     }
 
     fn verify_round(self: KnockoutGame, ref commitments: TwoHashes, ref moves: TwoMoves) {
