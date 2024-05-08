@@ -41,6 +41,12 @@ impl ChallengeImpl of ChallengeSystemTrait {
         challenge
     }
 
+    fn get_running_challenge(self: World, challenge_id: u128) -> Challenge {
+        let challenge = self.get_challenge(challenge_id);
+        assert(challenge.combat_id.is_non_zero(), 'Combat not started');
+        challenge
+    }
+
     fn send_challenge_invite(self: World, receiver: ContractAddress, blobert_id: u128) -> u128 {
         let challenge_id: u128 = self.uuid().into();
         let sender = get_caller_address();
@@ -113,13 +119,13 @@ impl ChallengeImpl of ChallengeSystemTrait {
         set!(self, (challenge.response(),));
     }
     fn commit_challenge_move(self: World, challenge_id: u128, hash: felt252) {
-        let mut challenge = self.get_open_challenge(challenge_id);
+        let mut challenge = self.get_running_challenge(challenge_id);
         let combat_id = challenge.combat_id;
         let game = self.get_knockout_game(combat_id);
         game.commit_move(hash)
     }
     fn reveal_challenge_move(self: World, challenge_id: u128, move: Move, salt: felt252) {
-        let mut challenge = self.get_open_challenge(challenge_id);
+        let mut challenge = self.get_running_challenge(challenge_id);
         let combat_id = challenge.combat_id;
         let game = self.get_knockout_game(combat_id);
         game.reveal_move(move, salt);
