@@ -12,19 +12,31 @@ public enum MoveN
 
 public class TwoMoves : ModelInstance
 {
+
+    #region GeneratedRegion 
+
     [ModelField("id")]
-    public FieldElement roundId;
+    public FieldElement dojoId;
+    
+
 
     [ModelField("a")]
-    public MoveN a;
+    public BlobertUtils.MoveN dojoA;
+    
+
+
     [ModelField("b")]
-    public MoveN b;
+    public BlobertUtils.MoveN dojoB;
+    
+
+    #endregion
+
 
     private void Start()
     {
         if (DojoEntitiesStorage.currentCombatId != null)
         {
-            if (DojoEntitiesStorage.currentCombatId.Hex() == roundId.Hex())
+            if (DojoEntitiesStorage.currentCombatId.Hex() == dojoId.Hex())
             {
                 DojoEntitiesStorage.twoMovesCurrentGame = this;
             }
@@ -35,7 +47,7 @@ public class TwoMoves : ModelInstance
             return;
         }
 
-        if (DojoEntitiesStorage.currentCombatId.Hex() == roundId.Hex())
+        if (DojoEntitiesStorage.currentCombatId.Hex() == dojoId.Hex())
         {
             DojoEntitiesStorage.twoMovesCurrentGame = this;
 
@@ -55,7 +67,7 @@ public class TwoMoves : ModelInstance
             return;
         }
 
-        if (DojoEntitiesStorage.currentCombatId.Hex() != roundId.Hex())
+        if (DojoEntitiesStorage.currentCombatId.Hex() != dojoId.Hex())
         {
             return;
         }

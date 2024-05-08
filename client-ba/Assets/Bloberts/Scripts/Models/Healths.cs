@@ -6,17 +6,27 @@ using UnityEngine;
 
 public class Healths : ModelInstance
 {
+    #region GeneratedRegion 
+
     [ModelField("combat_id")]
-    public FieldElement combatId;
+    public FieldElement dojoCombatId;
+    
+
 
     [ModelField("a")]
-    public byte a;
+    public byte dojoA;
+    
+
+
     [ModelField("b")]
-    public byte b;
+    public byte dojoB;
+    
+
+    #endregion  
 
     private void Start()
     {
-        DojoEntitiesStorage.healthsDict.Add(combatId.Hex(), this);
+        DojoEntitiesStorage.healthsDict.Add(dojoCombatId.Hex(), this);
     }
 
     public override void OnUpdate(Model model)

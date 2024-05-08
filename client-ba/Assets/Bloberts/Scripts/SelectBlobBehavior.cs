@@ -56,9 +56,9 @@ public class SelectBlobBehavior : Menu
             {
                 _blobertCardData[i + 1].SetActive(true);
                 var blobertCardComp = _blobertCardData[i + 1].GetComponent<BlobertCardData>();
-                blobertCardComp.SetBlobertData(DojoEntitiesStorage.userBloberts[adjustedIndex].dojoBlobertId);
+                blobertCardComp.SetBlobertData(DojoEntitiesStorage.userBloberts[adjustedIndex].dojoId);
 
-                if (DojoEntitiesStorage.userChoosenBlobert.dojoBlobertId.Hex() == DojoEntitiesStorage.userBloberts[adjustedIndex].dojoBlobertId.Hex())
+                if (DojoEntitiesStorage.userChoosenBlobert.dojoId.Hex() == DojoEntitiesStorage.userBloberts[adjustedIndex].dojoId.Hex())
                 {
                     blobertCardComp.SetBlobertBackground(new Color(0.1965083f, 0.5058824f, 0.01960785f, 1));
                 }

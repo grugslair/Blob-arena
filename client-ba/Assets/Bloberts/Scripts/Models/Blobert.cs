@@ -4,16 +4,28 @@ using Dojo.Torii;
 
 public class Blobert : ModelInstance
 {
+    #region GeneratedRegion 
+
     [ModelField("id")]
-    public FieldElement dojoBlobertId;
+    public FieldElement dojoId;
+    
+
 
     [ModelField("owner")]
     public FieldElement dojoOwner;
+    
+
+
+    [ModelField("traits")]
+    public BlobertUtils.Traits dojoTraits;
+    
+
 
     [ModelField("stats")]
     public BlobertUtils.Stats dojoStats;
-    [ModelField("traits")]
-    public BlobertUtils.Traits dojoTraits;
+    
+
+    #endregion  
 
     private FieldElement _savedOwner;
 
@@ -24,7 +36,7 @@ public class Blobert : ModelInstance
             DojoEntitiesStorage.userBloberts.Add(this);
         }
 
-        DojoEntitiesStorage.allBlobertDict.Add(dojoBlobertId.Hex(), this);
+        DojoEntitiesStorage.allBlobertDict.Add(dojoId.Hex(), this);
 
         _savedOwner = dojoOwner;
     }

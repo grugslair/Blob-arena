@@ -5,6 +5,7 @@ using System;
 
 public class Round : ModelInstance
 {
+    #region GeneratedRegion 
     [ModelField("combat_id")]
     public FieldElement combatId;
 
@@ -15,6 +16,8 @@ public class Round : ModelInstance
     public byte healthA;
     [ModelField("b_health")]
     public byte healthB;
+    #endregion
+
 
     private void Start()
     {

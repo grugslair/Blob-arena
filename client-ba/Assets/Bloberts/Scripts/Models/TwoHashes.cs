@@ -5,15 +5,22 @@ using System;
 
 public class TwoHashes : ModelInstance
 {
+    #region GeneratedRegion 
 
-    #region ModelFields
     [ModelField("id")]
-    public FieldElement combatId;
+    public FieldElement dojoId;
+    
+
 
     [ModelField("a")]
-    public FieldElement a;
+    public FieldElement dojoA;
+    
+
+
     [ModelField("b")]
-    public FieldElement b;
+    public FieldElement dojoB;
+    
+
     #endregion
 
 
@@ -22,7 +29,7 @@ public class TwoHashes : ModelInstance
     {
         if (DojoEntitiesStorage.currentCombatId != null)
         {
-            if (DojoEntitiesStorage.currentCombatId.Hex() == combatId.Hex())
+            if (DojoEntitiesStorage.currentCombatId.Hex() == dojoId.Hex())
             {
                 DojoEntitiesStorage.twoHashesCurrentGame = this;
             }
@@ -33,7 +40,7 @@ public class TwoHashes : ModelInstance
             return;
         }
 
-        if (DojoEntitiesStorage.currentCombatId.Hex() == combatId.Hex())
+        if (DojoEntitiesStorage.currentCombatId.Hex() == dojoId.Hex())
         {
             DojoEntitiesStorage.twoHashesCurrentGame = this;
 
@@ -53,7 +60,7 @@ public class TwoHashes : ModelInstance
             return;
         }
 
-        if (DojoEntitiesStorage.currentCombatId.Hex() != combatId.Hex())
+        if (DojoEntitiesStorage.currentCombatId.Hex() != dojoId.Hex())
         {
             return;
         }

@@ -26,6 +26,14 @@ public static class BlobertUtils
         Rush
     }
 
+    public enum MoveN
+    {
+        NONE,
+        BEAT,
+        COUNTER,
+        RUSH
+    }
+
     [Serializable]
     public struct Traits
     {

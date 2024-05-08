@@ -32,45 +32,44 @@ public class InLobbyScreenPage : Menu
     {
         if (DojoEntitiesStorage.challengeInvite == null)
         {
-            DojoEntitiesStorage.challengeInvite = DojoEntitiesStorage.challengeInvitesDict[DojoEntitiesStorage.challengeResponse.challengeId.Hex()];
+            DojoEntitiesStorage.challengeInvite = DojoEntitiesStorage.challengeInvitesDict[DojoEntitiesStorage.challengeResponse.dojoChallengeId.Hex()];
         }
 
-        if (DojoEntitiesStorage.challengeInvite.sender.Hex() == DojoEntitiesStorage.currentAccount.Address.Hex())
+        if (DojoEntitiesStorage.challengeInvite.dojoSender.Hex() == DojoEntitiesStorage.currentAccount.Address.Hex())
         {
             _adminButtons.SetActive(true);
             _guestButtons.SetActive(false);
 
-            _leftBlobertCardData.SetBlobertData(DojoEntitiesStorage.challengeInvite.blobertId);
-            _leftBlobIdText.text = $"ID: {BlobertUtils.HexToBigInt(DojoEntitiesStorage.challengeInvite.blobertId.Hex())}";
+            _leftBlobertCardData.SetBlobertData(DojoEntitiesStorage.challengeInvite.dojoBlobertId);
+            _leftBlobIdText.text = $"ID: {BlobertUtils.HexToBigInt(DojoEntitiesStorage.challengeInvite.dojoBlobertId.Hex())}";
             _leftOwnerText.text = $"{DojoEntitiesStorage.currentAccount.Address.Hex().Substring(0,8)}";
 
-            _rightBlobertCardData.SetBlobertData(DojoEntitiesStorage.challengeResponse.blobertId);
-            _rightBlobIdText.text = $"ID: {BlobertUtils.HexToBigInt(DojoEntitiesStorage.challengeResponse.blobertId.Hex())}";
-            _rightOwnerText.text = $"{DojoEntitiesStorage.challengeInvite.receiver.Hex().Substring(0, 8)}";
+            _rightBlobertCardData.SetBlobertData(DojoEntitiesStorage.challengeResponse.dojoBlobertId);
+            _rightBlobIdText.text = $"ID: {BlobertUtils.HexToBigInt(DojoEntitiesStorage.challengeResponse.dojoBlobertId.Hex())}";
+            _rightOwnerText.text = $"{DojoEntitiesStorage.challengeInvite.dojoReceiver.Hex().Substring(0, 8)}";
         }
         else
         {
             _adminButtons.SetActive(false);
             _guestButtons.SetActive(true);
 
-            _leftBlobertCardData.SetBlobertData(DojoEntitiesStorage.challengeResponse.blobertId);
-            _leftBlobIdText.text = $"ID: {BlobertUtils.HexToBigInt(DojoEntitiesStorage.challengeResponse.blobertId.Hex())}";
+            _leftBlobertCardData.SetBlobertData(DojoEntitiesStorage.challengeResponse.dojoBlobertId);
+            _leftBlobIdText.text = $"ID: {BlobertUtils.HexToBigInt(DojoEntitiesStorage.challengeResponse.dojoBlobertId.Hex())}";
             _leftOwnerText.text = $"{DojoEntitiesStorage.currentAccount.Address.Hex().Substring(0, 8)}";
 
-            _rightBlobertCardData.SetBlobertData(DojoEntitiesStorage.challengeInvite.blobertId);
-            _rightBlobIdText.text = $"ID: {BlobertUtils.HexToBigInt(DojoEntitiesStorage.challengeInvite.blobertId.Hex())}";
-            _rightOwnerText.text = $"{DojoEntitiesStorage.challengeInvite.sender.Hex().Substring(0, 8)}";
+            _rightBlobertCardData.SetBlobertData(DojoEntitiesStorage.challengeInvite.dojoBlobertId);
+            _rightBlobIdText.text = $"ID: {BlobertUtils.HexToBigInt(DojoEntitiesStorage.challengeInvite.dojoBlobertId.Hex())}";
+            _rightOwnerText.text = $"{DojoEntitiesStorage.challengeInvite.dojoSender.Hex().Substring(0, 8)}";
         }
     }
 
- 
     public void CurrentLobbyStateCheck()
     {
         if (DojoEntitiesStorage.challengeInvite != null)
         {
-            if (DojoEntitiesStorage.challengeResponse.open == false)
+            if (DojoEntitiesStorage.challengeResponse.dojoOpen == false)
             {
-                if (DojoEntitiesStorage.challengeInvite.sender.Hex() == DojoEntitiesStorage.currentAccount.Address.Hex())
+                if (DojoEntitiesStorage.challengeInvite.dojoSender.Hex() == DojoEntitiesStorage.currentAccount.Address.Hex())
                 {
                     _menuManager.OpenMenu(_createLobbyPage);
                     DojoEntitiesStorage.challengeResponse = null;
@@ -97,7 +96,7 @@ public class InLobbyScreenPage : Menu
 
         var dataStruct = new ChallengeActionsContract.AcceptResponseStruct
         {
-            challengeId = DojoEntitiesStorage.challengeInvite.challengeId,
+            challengeId = DojoEntitiesStorage.challengeInvite.dojoChallengeId,
         };
 
         var transaction = ChallengeActionsContract.AcceptResponseCall(dataStruct, endpoint);
@@ -114,7 +113,7 @@ public class InLobbyScreenPage : Menu
 
         var dataStruct = new ChallengeActionsContract.RejectResponseStruct
         {
-            challengeId = DojoEntitiesStorage.challengeInvite.challengeId,
+            challengeId = DojoEntitiesStorage.challengeInvite.dojoChallengeId,
         };
 
         var transaction = ChallengeActionsContract.RejectResponseCall(dataStruct, endpoint);
@@ -131,7 +130,7 @@ public class InLobbyScreenPage : Menu
 
         var dataStruct = new ChallengeActionsContract.RescindResponseStruct
         {
-            challengeId = DojoEntitiesStorage.challengeInvite.challengeId,
+            challengeId = DojoEntitiesStorage.challengeInvite.dojoChallengeId,
         };
 
         var transaction = ChallengeActionsContract.RescindResponseCall(dataStruct, endpoint);
@@ -149,8 +148,8 @@ public class InLobbyScreenPage : Menu
     {
         yield return new WaitForSeconds(1);
 
-        DojoEntitiesStorage.healthsCurrentGame = DojoEntitiesStorage.healthsDict[DojoEntitiesStorage.knockoutCurrentGame.combatId.Hex()];
-        DojoEntitiesStorage.currentCombatId = DojoEntitiesStorage.knockoutCurrentGame.combatId;
+        DojoEntitiesStorage.healthsCurrentGame = DojoEntitiesStorage.healthsDict[DojoEntitiesStorage.knockoutCurrentGame.dojoCombatId.Hex()];
+        DojoEntitiesStorage.currentCombatId = DojoEntitiesStorage.knockoutCurrentGame.dojoCombatId;
 
         _menuManager.OpenMenu(_battlePage);
     }

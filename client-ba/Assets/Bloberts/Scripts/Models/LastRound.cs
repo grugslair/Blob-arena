@@ -4,27 +4,47 @@ using Dojo.Torii;
 
 public class LastRound : ModelInstance
 {
+    #region GeneratedRegion 
+
     [ModelField("combat_id")]
-    public FieldElement combatId;
+    public FieldElement dojoCombatId;
+    
+
 
     [ModelField("health_a")]
-    public byte healthA;
+    public byte dojoHealthA;
+    
+
+
     [ModelField("health_b")]
-    public byte healthB;
+    public byte dojoHealthB;
+    
+
 
     [ModelField("move_a")]
-    public BlobertUtils.Move moveA;
+    public BlobertUtils.Move dojoMoveA;
+    
+
+
     [ModelField("move_b")]
-    public BlobertUtils.Move moveB;
+    public BlobertUtils.Move dojoMoveB;
+    
+
 
     [ModelField("damage_a")]
-    public byte damageA;
+    public byte dojoDamageA;
+    
+
+
     [ModelField("damage_b")]
-    public byte damageB;
+    public byte dojoDamageB;
+    
+
+    #endregion 
 
     private void Start()
     {
-        if (DojoEntitiesStorage.currentCombatId.Hex() == this.combatId.Hex())
+        if (DojoEntitiesStorage.currentCombatId.Hex() == this.dojoCombatId.Hex())
         {
             DojoEntitiesStorage.lastRoundCurrentGame = this;
         }

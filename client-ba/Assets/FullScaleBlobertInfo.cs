@@ -87,7 +87,7 @@ public class FullScaleBlobertInfo : MonoBehaviour
         _bicepValueText.text = _blobert.dojoStats.strength.ToString();
         _shieldValueText.text = _blobert.dojoStats.defense.ToString();
         _shoesValueText.text = _blobert.dojoStats.speed.ToString();
-        _idandOwnerText.text = $"ID: {BlobertUtils.HexToBigInt(_blobert.dojoBlobertId.Hex()) }\nOwner: {_blobert.dojoOwner.Hex().Substring(0,6)}";
+        _idandOwnerText.text = $"ID: {BlobertUtils.HexToBigInt(_blobert.dojoId.Hex()) }\nOwner: {_blobert.dojoOwner.Hex().Substring(0,6)}";
         _blobertWinStreakText.text = $"Win Streak: {7}";
     }
 

@@ -5,15 +5,28 @@ using UnityEngine;
 
 public class ChallengeResponse : ModelInstance
 {
-    [ModelField("challenge_id")]
-    public FieldElement challengeId;
-    [ModelField("blobert_id")]
-    public FieldElement blobertId;
-    [ModelField("open")]
-    public bool open;
-    [ModelField("combat_id")]
-    public FieldElement combatId;
+    #region GeneratedRegion 
 
+    [ModelField("challenge_id")]
+    public FieldElement dojoChallengeId;
+    
+
+
+    [ModelField("blobert_id")]
+    public FieldElement dojoBlobertId;
+    
+
+
+    [ModelField("open")]
+    public bool dojoOpen;
+    
+
+
+    [ModelField("combat_id")]
+    public FieldElement dojoCombatId;
+    
+
+    #endregion  
 
     private bool _previousOpen = true;
     // Start is called before the first frame update
@@ -21,7 +34,7 @@ public class ChallengeResponse : ModelInstance
     {
         if (DojoEntitiesStorage.selectedChallengeID != null)
         {
-            if (challengeId.Hex() == DojoEntitiesStorage.selectedChallengeID.Hex() && open)
+            if (dojoChallengeId.Hex() == DojoEntitiesStorage.selectedChallengeID.Hex() && dojoOpen)
             {
                 DojoEntitiesStorage.challengeResponse = this;
             }
@@ -32,9 +45,9 @@ public class ChallengeResponse : ModelInstance
     {
         base.OnUpdate(model);
 
-        if (open != _previousOpen)
+        if (dojoOpen != _previousOpen)
         {
-            _previousOpen = open;
+            _previousOpen = dojoOpen;
 
             if (DojoEntitiesStorage.challengeResponse == null) 
             {

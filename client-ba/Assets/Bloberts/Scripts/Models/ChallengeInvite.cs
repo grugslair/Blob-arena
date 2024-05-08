@@ -4,33 +4,50 @@ using Dojo.Torii;
 
 public class ChallengeInvite : ModelInstance
 {
+    #region GeneratedRegion 
+
     [ModelField("challenge_id")]
-    public FieldElement challengeId;
+    public FieldElement dojoChallengeId;
+    
+
+
     [ModelField("sender")]
-    public FieldElement sender;
+    public FieldElement dojoSender;
+    
+
+
     [ModelField("receiver")]
-    public FieldElement receiver;
+    public FieldElement dojoReceiver;
+    
+
+
     [ModelField("blobert_id")]
-    public FieldElement blobertId;
+    public FieldElement dojoBlobertId;
+    
+
+
     [ModelField("open")]
-    public bool open;
+    public bool dojoOpen;
+    
+
+    #endregion 
 
     // Start is called before the first frame update
     void Start()
     {
-        DojoEntitiesStorage.challengeInvitesDict.Add(challengeId.Hex(), this);
+        DojoEntitiesStorage.challengeInvitesDict.Add(dojoChallengeId.Hex(), this);
 
-        if (sender.Hex() == DojoEntitiesStorage.currentAccount.Address.Hex() && open)
+        if (dojoSender.Hex() == DojoEntitiesStorage.currentAccount.Address.Hex() && dojoOpen)
         {
             DojoEntitiesStorage.challengeInvite = this;
-            DojoEntitiesStorage.selectedChallengeID = challengeId;
+            DojoEntitiesStorage.selectedChallengeID = dojoChallengeId;
 
             if (UiReferencesStatic.createLobbyBehavior != null)
             {
                 UiReferencesStatic.createLobbyBehavior.CheckForActiveRequest();
             }
         }
-        else if (receiver.Hex() == DojoEntitiesStorage.currentAccount.Address.Hex() && open)
+        else if (dojoReceiver.Hex() == DojoEntitiesStorage.currentAccount.Address.Hex() && dojoOpen)
         {
             DojoEntitiesStorage.userReceivedChallengeInvites.Add(this);
 
@@ -45,7 +62,7 @@ public class ChallengeInvite : ModelInstance
     {
         base.OnUpdate(model);
 
-        if (!open && DojoEntitiesStorage.userReceivedChallengeInvites.Contains(this))
+        if (!dojoOpen && DojoEntitiesStorage.userReceivedChallengeInvites.Contains(this))
         {
             DojoEntitiesStorage.userReceivedChallengeInvites.Remove(this);
 
@@ -54,10 +71,10 @@ public class ChallengeInvite : ModelInstance
                 UiReferencesStatic.searchLobbyPageBehaviour.RefreshInvitations();
             }
         }
-        if (!open && DojoEntitiesStorage.selectedChallengeID != null)
+        if (!dojoOpen && DojoEntitiesStorage.selectedChallengeID != null)
         {
-            if (challengeId.Hex() == DojoEntitiesStorage.selectedChallengeID.Hex())
-            {
+            if (dojoChallengeId.Hex() == DojoEntitiesStorage.selectedChallengeID.Hex())
+            {   
                 DojoEntitiesStorage.challengeInvite = null;
                 DojoEntitiesStorage.selectedChallengeID = null;
 

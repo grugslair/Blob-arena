@@ -45,7 +45,7 @@ public class SearchLobbyPageBehaviour : Menu
 
         foreach (var invite in DojoEntitiesStorage.userReceivedChallengeInvites)
         {
-            if (invite.open == false)
+            if (invite.dojoOpen == false)
             {
                 continue;
             }
@@ -54,7 +54,7 @@ public class SearchLobbyPageBehaviour : Menu
             
             invitationObject.transform.SetParent(_invitationToLobbyParent);
 
-            invitationObject.GetComponent<InvitationToLobby>().Initialize(invite.challengeId, invite.sender ,invite.blobertId , this);
+            invitationObject.GetComponent<InvitationToLobby>().Initialize(invite.dojoChallengeId, invite.dojoSender ,invite.dojoBlobertId , this);
         }
     }
 
@@ -87,7 +87,7 @@ public class SearchLobbyPageBehaviour : Menu
         var dataStruct = new ChallengeActionsContract.RespondInviteStruct
         {
             challengeId = challengeID,
-            blobertId = DojoEntitiesStorage.userChoosenBlobert.dojoBlobertId,
+            blobertId = DojoEntitiesStorage.userChoosenBlobert.dojoId,
         };
 
         DojoEntitiesStorage.selectedChallengeID = challengeID;

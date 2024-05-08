@@ -34,7 +34,7 @@ public class CreateLobbyBehavior : Menu
 
         addressText.text = DojoEntitiesStorage.currentAccount.Address.Hex();
 
-        blobertCardData.SetBlobertData(blobert.dojoBlobertId);
+        blobertCardData.SetBlobertData(blobert.dojoId);
 
         CheckForActiveRequest();
     }
@@ -140,7 +140,7 @@ public class CreateLobbyBehavior : Menu
         var dataStruct = new ChallengeActionsContract.SendInviteStruct
         {
             receiver = new FieldElement(inputFieldOtherPlayer.text),
-            blobertId = DojoEntitiesStorage.userChoosenBlobert.dojoBlobertId,
+            blobertId = DojoEntitiesStorage.userChoosenBlobert.dojoId,
         };
 
         var transaction = await ChallengeActionsContract.SendInviteCall(dataStruct, endpoint);
@@ -278,7 +278,7 @@ public class CreateLobbyBehavior : Menu
         {
             _sendRequestGameobject.SetActive(false);
             _cancelRequestGameobject.SetActive(true);
-            _cancelRequestText.text = $"Cancel Request to {DojoEntitiesStorage.challengeInvite.receiver.Hex().Substring(0,6)}";
+            _cancelRequestText.text = $"Cancel Request to {DojoEntitiesStorage.challengeInvite.dojoReceiver.Hex().Substring(0,6)}";
         }
         else
         {

@@ -4,28 +4,43 @@ using Dojo.Torii;
 
 public class Knockout : ModelInstance
 {
+    #region GeneratedRegion 
+
     [ModelField("combat_id")]
-    public FieldElement combatId;
+    public FieldElement dojoCombatId;
+    
+
 
     [ModelField("player_a")]
-    public FieldElement playerA;
+    public FieldElement dojoPlayerA;
+    
+
+
     [ModelField("player_b")]
-    public FieldElement playerB;
+    public FieldElement dojoPlayerB;
+    
+
 
     [ModelField("blobert_a")]
-    public FieldElement blobertA;
+    public FieldElement dojoBlobertA;
+    
+
+
     [ModelField("blobert_b")]
-    public FieldElement blobertB;
+    public FieldElement dojoBlobertB;
+    
+
+    #endregion  
 
     private void Start()
     {
-        DojoEntitiesStorage.knockoutDict.Add(combatId.Hex(), this);
+        DojoEntitiesStorage.knockoutDict.Add(dojoCombatId.Hex(), this);
 
         if (DojoEntitiesStorage.challengeInvite != null)
         {
             var invStruct = DojoEntitiesStorage.challengeInvite;
 
-            if (playerA.Hex() == invStruct.sender.Hex()  ||   playerA.Hex() == invStruct.receiver.Hex())
+            if (dojoPlayerA.Hex() == invStruct.dojoSender.Hex()  ||   dojoPlayerA.Hex() == invStruct.dojoReceiver.Hex())
             {
                 
             }
@@ -34,7 +49,7 @@ public class Knockout : ModelInstance
                 return;
             }
 
-            if (playerB.Hex() == invStruct.sender.Hex() || playerB.Hex() == invStruct.receiver.Hex())
+            if (dojoPlayerB.Hex() == invStruct.dojoSender.Hex() || dojoPlayerB.Hex() == invStruct.dojoReceiver.Hex())
             {
                 DojoEntitiesStorage.knockoutCurrentGame = this;
             }
@@ -43,15 +58,6 @@ public class Knockout : ModelInstance
                 return;
             }
         }
-
-
-        //if (DojoEntitiesStorage.currentCombatId != null)
-        //{
-        //    if (DojoEntitiesStorage.currentCombatId.Hex() == this.combatId.Hex())
-        //    {
-        //        DojoEntitiesStorage.knockoutCurrentGame = this;
-        //    }
-        //}
     }
 
     public override void OnUpdate(Model model)

@@ -1,5 +1,14 @@
 {
   "dependencies": {
+    "com.lastabyss.simplegraphql": {
+      "version": "https://github.com/NavidK0/SimpleGraphQL-For-Unity.git",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {
+        "com.unity.nuget.newtonsoft-json": "2.0.0"
+      },
+      "hash": "78d6962a171b2b27f7109bbdd6751f8af79d6b5b"
+    },
     "com.unity.2d.sprite": {
       "version": "1.0.0",
       "depth": 0,
@@ -147,13 +156,6 @@
         "com.unity.modules.jsonserialize": "1.0.0"
       },
       "url": "https://packages.unity.com"
-    },
-    "com.veriorpies.parrelsync": {
-      "version": "https://github.com/VeriorPies/ParrelSync.git?path=/ParrelSync",
-      "depth": 0,
-      "source": "git",
-      "dependencies": {},
-      "hash": "d1ef610e9fe3ad0b490cce91594449fc0af809a6"
     },
     "com.unity.modules.ai": {
       "version": "1.0.0",

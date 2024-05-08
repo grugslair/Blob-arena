@@ -8,9 +8,7 @@ public static class UiReferencesStatic
 
     public static CreateLobbyBehavior createLobbyBehavior { get; set; }
 
-    public static LeaderBoardExpandBehavior leaderBoardExpandBehavior { get; set; }
-
-    public static LeaderBoardSimpleBehavior leaderBoardSimpleBehavior { get; set; }
+    public static LeaderBoardPageBehaviour leaderBoardPageBehaviour { get; set; }
 
     public static LoginScreenBehaviour loginScreenBehaviour { get; set; }
 

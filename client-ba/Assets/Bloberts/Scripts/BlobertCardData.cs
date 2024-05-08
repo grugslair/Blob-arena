@@ -19,14 +19,16 @@ public class BlobertCardData : MonoBehaviour, IPointerClickHandler
     [SerializeField] TMP_Text _shoesValueText;
 
     [SerializeField] TMP_Text _idValueText;
+    [SerializeField] TMP_Text _blobertOwnerText;
+
+    [SerializeField] TMP_Text _blobertWinsText;
 
     public FieldElement blobertId;
     public Blobert blobert;
 
     [SerializeField] private GameObject _blobertCardFullData;
 
-    public bool loadPicture = true;
-    public bool loadText = true;
+    public bool allowedToExpand = false;
 
     public void SetBlobertData(FieldElement id)
     {
@@ -34,12 +36,8 @@ public class BlobertCardData : MonoBehaviour, IPointerClickHandler
 
         blobert = DojoEntitiesStorage.allBlobertDict[id.Hex()];
         
-        SetBlobertId();
-        if (loadText)
-            SetBlobertText(blobert);
-
-        if (loadPicture)
-            SetUpTraitPicture();
+        SetBlobertText(blobert);
+        SetUpTraitPicture();
     }
 
     private void SetUpTraitPicture()
@@ -72,18 +70,40 @@ public class BlobertCardData : MonoBehaviour, IPointerClickHandler
 
     private void SetBlobertText(Blobert blobert)
     {
-        _bicepValueText.text =  blobert.dojoStats.strength.ToString();
-        _swordValueText.text = blobert.dojoStats.attack.ToString();
-        _shieldValueText.text = blobert.dojoStats.defense.ToString();
-        _shoesValueText.text = blobert.dojoStats.speed.ToString();
-    }
+        if (_swordValueText != null)
+        {
+            _swordValueText.text = $"{blobert.dojoStats.attack}";
+        }
 
-    private void SetBlobertId()
-    {
+        if (_bicepValueText != null)
+        {
+            _bicepValueText.text = $"{blobert.dojoStats.strength}";
+        }
+
+        if (_shieldValueText != null)
+        {
+            _shieldValueText.text = $"{blobert.dojoStats.defense}";
+        }
+
+        if (_shoesValueText != null)
+        {
+            _shoesValueText.text = $"{blobert.dojoStats.speed}";
+        }
+
         if (_idValueText != null)
         {
-            _idValueText.text = $"ID: {BlobertUtils.HexToBigInt(blobert.dojoBlobertId.Hex())}";
+            _idValueText.text = $"ID: {BlobertUtils.HexToBigInt(blobert.dojoId.Hex())}";
         }
+
+        if (_blobertOwnerText != null)
+        {
+            _blobertOwnerText.text = $"Owner: {blobert.dojoOwner.Hex().Substring(0,6)}";
+        }
+    }
+
+    public void SetBlobertWinsText(string wins)
+    {
+        _blobertWinsText.text = $"Wins: {wins}";
     }
 
     public void SetBlobertBackground(Color color)
@@ -93,10 +113,12 @@ public class BlobertCardData : MonoBehaviour, IPointerClickHandler
 
     public void OnPointerClick(PointerEventData eventData)
     {
+        if (allowedToExpand)
+        {
+            var canvas = GameObject.Find("Canvas"); // this is a no no
 
-        var canvas = GameObject.Find("Canvas"); // this is a no no
-
-        var blobertCardFullData = Instantiate(_blobertCardFullData, canvas.transform);
-        blobertCardFullData.GetComponent<FullScaleBlobertInfo>().Initialize(blobert);
+            var blobertCardFullData = Instantiate(_blobertCardFullData, canvas.transform);
+            blobertCardFullData.GetComponent<FullScaleBlobertInfo>().Initialize(blobert);
+        }
     }
 }

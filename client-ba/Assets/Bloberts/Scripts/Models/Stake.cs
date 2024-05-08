@@ -4,15 +4,23 @@ using Dojo.Torii;
 
 public class Stake : ModelInstance
 {
+    #region GeneratedRegion 
 
-    [ModelField("id")]
-    public FieldElement id;
+    [ModelField("combat_id")]
+    public FieldElement dojoCombatId;
+    
 
-    [ModelField("owner")]
-    public FieldElement owner;
-    [ModelField("running")]
-    public bool running;
 
+    [ModelField("amount")]
+    public BlobertUtils.u256 dojoAmount;
+    
+
+
+    [ModelField("blobert")]
+    public bool dojoBlobert;
+    
+
+    #endregion
 
     // Start is called before the first frame update
     void Start()

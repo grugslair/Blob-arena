@@ -29,7 +29,7 @@ namespace Dojo
         public string worldAddress = "";
 
         public string blobertContractAddress = "";
-        public string knockoutContractAddress = "";
+        //public string knockoutContractAddress = "";
         public string challengeblobertContractAddress = "";
         public string lobbyContractAddress = "";
 
