@@ -36,7 +36,7 @@ public class LastRound : ModelInstance
 
         if (this == DojoEntitiesStorage.lastRoundCurrentGame)
         {
-            UiReferencesStatic.battlePageBehaviour.UpdateFrontEndData();
+            UiReferencesStatic.battlePageBehaviour.UpdateLastRound(this);
         }
     }
 }

@@ -6,20 +6,21 @@ using UnityEngine;
 
 public class MenuManager : MonoBehaviour
 {
-    // every state has one of this this needs the
-    // the last opened
-    // the current opened 
-  
-    [SerializeField] Menu[] menus;
-    [SerializeField] Menu[] nonReturnableMenus;
+    [SerializeField] Menu[] _menus;
+    [SerializeField] Menu[] _nonReturnableMenus;
 
-    public  Menu previousMenu;
+    public Menu previousMenu;
     public Menu currentlyOpened;
 
     public int gamePhase = 1; 
  
     public void OpenMenu(Menu menu)
     {
+        if (menu == null)
+        {
+            Debug.LogError("Menu is null");
+            return;
+        }
 
         if (currentlyOpened == menu)  // if the currently opened menu is the same as the one being called to open again this means its actually a close call
         {
@@ -43,7 +44,7 @@ public class MenuManager : MonoBehaviour
                
                 currentlyOpened.Close(); //close the one open now
 
-                if (!nonReturnableMenus.Contains(currentlyOpened))  //chekc if the one that we want to open is in the non savable
+                if (!_nonReturnableMenus.Contains(currentlyOpened))  //chekc if the one that we want to open is in the non savable
                 {
                     previousMenu = currentlyOpened; // if it is not we should save it 
                 }
@@ -58,24 +59,13 @@ public class MenuManager : MonoBehaviour
         }
     }
 
-
-
     private void Update()
     {
-        if ( Input.GetKeyDown(KeyCode.Space))
-        {
-            OpenMenu(menus[4]);
-        }
-
-
-        if (Input.GetKeyDown(KeyCode.M))
-        {
-            OpenMenu(menus[6]);
-        }
+      
     }
+
     public void CloseGame()
     {
         Application.Quit();
     }
-
 }

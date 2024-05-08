@@ -43,8 +43,8 @@ public class WorldManagerDataEditor : Editor
                     data.challengeblobertContractAddress = "0x3ce2e701b020ba2c2af15b7347c9d05a5f28b7060609295c6f461af326bc68c";
                     data.lobbyContractAddress = "";
 
-                    data.masterAddress = "0xdf6a29cf4ffd62158f8b39fd3b705c13d34932632b22994f143428ca303871";
-                    data.masterPrivateKey = "0x1d153b36b2649e1e273a6dfd3a2ede98419b0dcc7e2a32e20bbee7df083f49c";
+                    data.masterAddress = "0x1fedb7ea7951d601fd09f7d19f6c7b591c98e01333988aa3ac0f9afccb1c51b";
+                    data.masterPrivateKey = "0x171244d135659ace479990bf9f7d95eded78faf732ebade3337d2a0ca666867";
                     break;
 
                 case EnvironmentType.TESTNET:

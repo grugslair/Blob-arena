@@ -5,19 +5,24 @@ using System;
 
 public class TwoHashes : ModelInstance
 {
+
+    #region ModelFields
     [ModelField("id")]
-    public FieldElement roundId;
+    public FieldElement combatId;
 
     [ModelField("a")]
     public FieldElement a;
     [ModelField("b")]
     public FieldElement b;
+    #endregion
+
+
 
     private void Start()
     {
         if (DojoEntitiesStorage.currentCombatId != null)
         {
-            if (DojoEntitiesStorage.currentCombatId.Hex() == roundId.Hex())
+            if (DojoEntitiesStorage.currentCombatId.Hex() == combatId.Hex())
             {
                 DojoEntitiesStorage.twoHashesCurrentGame = this;
             }
@@ -28,7 +33,7 @@ public class TwoHashes : ModelInstance
             return;
         }
 
-        if (DojoEntitiesStorage.currentCombatId.Hex() == roundId.Hex())
+        if (DojoEntitiesStorage.currentCombatId.Hex() == combatId.Hex())
         {
             DojoEntitiesStorage.twoHashesCurrentGame = this;
 
@@ -48,7 +53,7 @@ public class TwoHashes : ModelInstance
             return;
         }
 
-        if (DojoEntitiesStorage.currentCombatId.Hex() != roundId.Hex())
+        if (DojoEntitiesStorage.currentCombatId.Hex() != combatId.Hex())
         {
             return;
         }

@@ -134,59 +134,54 @@ public class CreateLobbyBehavior : Menu
         {
             account = DojoEntitiesStorage.currentAccount,
             addressOfSystem = DojoEntitiesStorage.worldManagerData.challengeblobertContractAddress,
-            functionName = ChallengeContract.FunctionNames.SendInvite.EnumToString(),
+            functionName = ChallengeActionsContract.FunctionNames.SendInvite.EnumToString(),
         };
 
-        var dataStruct = new ChallengeContract.SendInviteStruct
+        var dataStruct = new ChallengeActionsContract.SendInviteStruct
         {
             receiver = new FieldElement(inputFieldOtherPlayer.text),
             blobertId = DojoEntitiesStorage.userChoosenBlobert.dojoBlobertId,
         };
 
-        var transaction = await ChallengeContract.SendInvite(dataStruct, endpoint);
+        var transaction = await ChallengeActionsContract.SendInviteCall(dataStruct, endpoint);
 
         CheckForActiveRequest();
     }
 
     public async void CancelSentInvite()
     {
-        Debug.Log("called the cancel the sent inv");
-
         var endpoint = new EndpointDojoCallStruct
         {
             account = DojoEntitiesStorage.currentAccount,
             addressOfSystem = DojoEntitiesStorage.worldManagerData.challengeblobertContractAddress,
-            functionName = ChallengeContract.FunctionNames.CloseInvite.EnumToString(),
+            functionName = ChallengeActionsContract.FunctionNames.RescindInvite.EnumToString(),
         };
 
-        var dataStruct = new ChallengeContract.CloseInviteStruct
+        var dataStruct = new ChallengeActionsContract.RescindInviteStruct
         {
             challengeId = DojoEntitiesStorage.selectedChallengeID,
         };
 
-        var transaction = await ChallengeContract.CloseInvite(dataStruct, endpoint);
+        var transaction = await ChallengeActionsContract.RescindInviteCall(dataStruct, endpoint);
 
         CheckForActiveRequest();
     }
 
     public void StartGame()
     {
-        Debug.Log("called the starting game func");
-
-
         var endpoint = new EndpointDojoCallStruct
         {
             account = DojoEntitiesStorage.currentAccount,
             addressOfSystem = DojoEntitiesStorage.worldManagerData.challengeblobertContractAddress,
-            functionName = ChallengeContract.FunctionNames.AcceptResponse.EnumToString(),
+            functionName = ChallengeActionsContract.FunctionNames.AcceptResponse.EnumToString(),
         };
 
-        var dataStruct = new ChallengeContract.AcceptResponseStruct
+        var dataStruct = new ChallengeActionsContract.AcceptResponseStruct
         {
             challengeId = new FieldElement(inputFieldOtherPlayer.text),
         };
 
-        var transaction = ChallengeContract.AcceptResponse(dataStruct, endpoint);
+        var transaction = ChallengeActionsContract.AcceptResponseCall(dataStruct, endpoint);
     }
 
     void Update()

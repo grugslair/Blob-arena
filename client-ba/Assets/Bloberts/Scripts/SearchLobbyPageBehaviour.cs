@@ -26,27 +26,6 @@ public class SearchLobbyPageBehaviour : Menu
         {
             _menuManager.OpenMenu(_lobbyMenu);
         }
-
-        if (Input.GetKeyDown(KeyCode.H))
-        {
-            if (DojoEntitiesStorage.challengeInvite != null)
-            {
-                Debug.Log("challenge invite is not null");
-            }
-            else
-            {
-                Debug.Log("challenge invite is null");
-            }
-
-            if (DojoEntitiesStorage.challengeResponse != null)
-            {
-                Debug.Log("challenge response is not null");
-            }
-            else
-            {
-                Debug.Log("challenge response is null");
-            }
-        }
     }
 
     private void OnEnable()
@@ -56,6 +35,8 @@ public class SearchLobbyPageBehaviour : Menu
 
     public void RefreshInvitations()
     {
+        Debug.Log("refreshing invitations");
+
         //kill all the children
         foreach (Transform child in _invitationToLobbyParent)
         {
@@ -64,44 +45,46 @@ public class SearchLobbyPageBehaviour : Menu
 
         foreach (var invite in DojoEntitiesStorage.userReceivedChallengeInvites)
         {
+            if (invite.open == false)
+            {
+                continue;
+            }
             var invitationObject = Instantiate(_invitationToLobbyPrefab);
+            invitationObject.transform.localScale = Vector3.one;
+            
             invitationObject.transform.SetParent(_invitationToLobbyParent);
 
             invitationObject.GetComponent<InvitationToLobby>().Initialize(invite.challengeId, invite.sender ,invite.blobertId , this);
         }
     }
 
-    public void SayNoToInvite(FieldElement challengeID)
+    public async void SayNoToInvite(FieldElement challengeID)
     {
-        Debug.Log("called the say no to inv function");
-
         var endpoint = new EndpointDojoCallStruct
         {
             account = DojoEntitiesStorage.currentAccount,
             addressOfSystem = DojoEntitiesStorage.worldManagerData.challengeblobertContractAddress,
-            functionName = ChallengeContract.FunctionNames.CloseResponse.EnumToString(),
+            functionName = ChallengeActionsContract.FunctionNames.RejectInvite.EnumToString(),
         };
 
-        var dataStruct = new ChallengeContract.RejectInviteStruct
+        var dataStruct = new ChallengeActionsContract.RejectInviteStruct
         {
             challengeId = challengeID,
         };
 
-        var transaction = ChallengeContract.RejectInvite(dataStruct, endpoint);
+        var transaction = await ChallengeActionsContract.RejectInviteCall(dataStruct, endpoint);
     }
 
-    public void SayYesToInvite(FieldElement challengeID)
+    public async void SayYesToInvite(FieldElement challengeID)
     {
-        Debug.Log("called the say yes to inv function");
-
         var endpoint = new EndpointDojoCallStruct
         {
             account = DojoEntitiesStorage.currentAccount,
             addressOfSystem = DojoEntitiesStorage.worldManagerData.challengeblobertContractAddress,
-            functionName = ChallengeContract.FunctionNames.RespondInvite.EnumToString(),
+            functionName = ChallengeActionsContract.FunctionNames.RespondInvite.EnumToString(),
         };
 
-        var dataStruct = new ChallengeContract.RespondInviteStruct
+        var dataStruct = new ChallengeActionsContract.RespondInviteStruct
         {
             challengeId = challengeID,
             blobertId = DojoEntitiesStorage.userChoosenBlobert.dojoBlobertId,
@@ -109,7 +92,12 @@ public class SearchLobbyPageBehaviour : Menu
 
         DojoEntitiesStorage.selectedChallengeID = challengeID;
 
-        var transaction = ChallengeContract.RespondInvite(dataStruct, endpoint);
-    }
+        var transaction = await ChallengeActionsContract.RespondInviteCall(dataStruct, endpoint);
 
+        if (transaction != null)
+        {
+            Debug.Log("not null and should be opening lobby");
+            DojoEntitiesStorage.challengeInvite = DojoEntitiesStorage.challengeInvitesDict[challengeID.Hex()];
+        }
+    }
 }

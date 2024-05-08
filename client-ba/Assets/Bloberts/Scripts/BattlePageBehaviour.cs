@@ -28,20 +28,21 @@ public class BattlePageBehaviour : Menu
     [SerializeField] private RectTransform blobertLeft;
     [SerializeField] private RectTransform blobertRight;
 
-
     private Vector2 originalPositionBloberLeft;
     private Vector2 originalPositionBobertRight;
 
-    private Tweener tweenBloberLeft;
-    private Tweener tweenBobertRight;
+    private Tweener _tweenBloberLeft;
+    private Tweener _tweenBobertRight;
 
     public int gameState = 0;
     public string playerLetter = "";
 
     private DateTime lastInteractionWithContract = DateTime.MinValue;
 
-    private bool isBloberLeftAnimating = false;
-    private bool isBobertRightAnimating = false;
+    private bool _isBloberLeftAnimating = false;
+    private bool _isBobertRightAnimating = false;
+
+    private bool _commiting = true;
 
     private void Start()
     {
@@ -87,13 +88,7 @@ public class BattlePageBehaviour : Menu
         {
             StopBobertRightAnimation();
         }
-
-        //Debug.Log(gameState);
     }
-
-
-    private bool commiting = true;
-
 
     public void CallFromDataToUpdate()
     {
@@ -103,10 +98,8 @@ public class BattlePageBehaviour : Menu
             return;
         }
 
-        if (commiting)
+        if (_commiting)
         {
-            Debug.Log("in the commiting state");
-
             if (DojoEntitiesStorage.twoHashesCurrentGame != null)
             {
                 var a = DojoEntitiesStorage.twoHashesCurrentGame.a.Hex();
@@ -120,8 +113,6 @@ public class BattlePageBehaviour : Menu
                 {
                     case 0:
 
-                        Debug.Log("both hashes are filled");
-
                         StopBobertRightAnimation();
                         StopBloberLeftAnimation();
 
@@ -129,13 +120,11 @@ public class BattlePageBehaviour : Menu
                         revealButton.SetActive(true);
                         waitButton.SetActive(false);
 
-                        commiting = false;
+                        _commiting = false;
 
                         break;
                     case 1:
                         // Only a is not empty
-                        Debug.Log("Only player A has an empty hash");
-
                         if (playerLetter == "a")
                         {
                             // i am the one making the other guy wait
@@ -160,8 +149,6 @@ public class BattlePageBehaviour : Menu
                         break;
                     case 2:
                         // Only b is not empty
-                        Debug.Log("only Player b has an empty hash");
-
                         if (playerLetter == "b")
                         {
                             StartBloberLeftAnimation();
@@ -185,7 +172,6 @@ public class BattlePageBehaviour : Menu
                         break;
                     case 3:
                         // Both are not empty
-                        Debug.Log("The hashes are both empty");
 
                         StartBloberLeftAnimation();
                         StartBobertRightAnimation();
@@ -209,8 +195,6 @@ public class BattlePageBehaviour : Menu
         }
         else
         {
-            Debug.Log("in the reveal state");
-
             if (DojoEntitiesStorage.twoMovesCurrentGame != null)
             {
                 var a = DojoEntitiesStorage.twoMovesCurrentGame.a;
@@ -223,20 +207,16 @@ public class BattlePageBehaviour : Menu
                 switch (state)
                 {
                     case 0:
-                        Debug.Log("The moves are both full");
-
                         // Both are empty
                         StopBloberLeftAnimation();
                         StopBobertRightAnimation();
 
-                        commiting = true;
+                        _commiting = true;
 
                         // both are empty therefore we blob
                         break;
                     case 1:
                         // Only a is not empty
-                        Debug.Log("only a moves is empty");
-
                         if (playerLetter == "a")
                         {
                             StartBloberLeftAnimation();
@@ -262,8 +242,6 @@ public class BattlePageBehaviour : Menu
                         break;
                     case 2:
                         // Only b is not empty
-                        Debug.Log("only b moves is empty");
-
                         if (playerLetter == "b")
                         {
                             StartBloberLeftAnimation();
@@ -284,23 +262,17 @@ public class BattlePageBehaviour : Menu
                         }
                         break;
                     case 3:
-
-                        Debug.Log("Both of them are empty");
-
                         StartBloberLeftAnimation();
                         StartBobertRightAnimation();
 
-
                         // but if the hashes are also empty
-
                         if (DojoEntitiesStorage.twoHashesCurrentGame.a.Hex() == BlobertUtils.emptyFieldElement && DojoEntitiesStorage.twoHashesCurrentGame.b.Hex() == BlobertUtils.emptyFieldElement)
                         {
-                            commiting = true;
+                            _commiting = true;
 
                             StartBloberLeftAnimation();
                             StartBobertRightAnimation();
                         }
-
                         break;
                 }
             }
@@ -317,18 +289,16 @@ public class BattlePageBehaviour : Menu
         Debug.Log("\n\n");
     }
 
-
     public bool CheckPlayerHealths()
     {
-        Debug.Log("this is checking the healths of the player");
-
-        if (DojoEntitiesStorage.lastRoundCurrentGame == null)
+        if (DojoEntitiesStorage.healthsCurrentGame == null)
         {
             return false;
         }
 
+        UpdateFrontEndData();
 
-        if (DojoEntitiesStorage.lastRoundCurrentGame.healthA <= 0)
+        if (DojoEntitiesStorage.healthsCurrentGame.a <= 0)
         {
             revealButton.SetActive(false);
             commitButton.SetActive(false);
@@ -337,14 +307,12 @@ public class BattlePageBehaviour : Menu
             winnerBanner.SetActive(true);
             winnerText.text = $"Player {DojoEntitiesStorage.knockoutCurrentGame.playerB.Hex().Substring(0, 6)} wins";
 
-            ClearDojoFightCache(true);
-
             StopBloberLeftAnimation();
             StartBobertRightAnimation();
 
             return true;
         }
-        else if (DojoEntitiesStorage.lastRoundCurrentGame.healthB <= 0)
+        else if (DojoEntitiesStorage.healthsCurrentGame.b <= 0)
         {
             revealButton.SetActive(false);
             commitButton.SetActive(false);
@@ -352,8 +320,6 @@ public class BattlePageBehaviour : Menu
 
             winnerBanner.SetActive(true);
             winnerText.text = $"Player {DojoEntitiesStorage.knockoutCurrentGame.playerA.Hex().Substring(0, 6)} wins";
-
-            ClearDojoFightCache(true);
 
             StartBloberLeftAnimation();
             StopBobertRightAnimation();
@@ -385,21 +351,35 @@ public class BattlePageBehaviour : Menu
 
             lastMove = (BlobertUtils.Move)action;
 
+            Debug.Log("Committing a move");
+
+            switch (lastMove)
+            {
+                case BlobertUtils.Move.Rush:
+                    Debug.Log("Rush");
+                    break;
+                case BlobertUtils.Move.Beat:
+                    Debug.Log("Beat");
+                    break;
+                case BlobertUtils.Move.Counter:
+                    Debug.Log("Counter");
+                    break;
+            }
+
+            Debug.Log("Secret number: " + secretNumber);
+            Debug.Log("Hash: " + pedersenHash.Hex());
+            Debug.Log("\n\n");
+
             var endpoint = new EndpointDojoCallStruct
             {
                 account = DojoEntitiesStorage.currentAccount,
                 addressOfSystem = DojoEntitiesStorage.worldManagerData.knockoutContractAddress,
-                functionName = KnockoutContract.FunctionNames.Commit.EnumToString(),
+                functionName = ChallengeActionsContract.FunctionNames.CommitMove.EnumToString(),
             };
 
-            var structData = new KnockoutContract.CommitMoveStruct
-            {
-                combat_id = DojoEntitiesStorage.knockoutCurrentGame.combatId,  
-                hash = pedersenHash 
-            };
+            var structData = new ChallengeActionsContract.CommitMoveStruct(challengeId: DojoEntitiesStorage.knockoutCurrentGame.combatId, hash: pedersenHash);
 
-            var transaction = await KnockoutContract.CommitMove(structData, endpoint);
-
+            var transaction = await ChallengeActionsContract.CommitMoveCall(structData, endpoint);
         }
         catch (Exception ex)
         {
@@ -408,7 +388,6 @@ public class BattlePageBehaviour : Menu
 
         UpdateFrontEndData();
     }
-
     public async void CallToReveal()
     {
         try
@@ -425,21 +404,34 @@ public class BattlePageBehaviour : Menu
                 lastInteractionWithContract = DateTime.Now;
             }
 
+            Debug.Log("revealing a move");
+
+            switch (lastMove)
+            {
+                case BlobertUtils.Move.Rush:
+                    Debug.Log("Rush");
+                    break;
+                case BlobertUtils.Move.Beat:
+                    Debug.Log("Beat");
+                    break;
+                case BlobertUtils.Move.Counter:
+                    Debug.Log("Counter");
+                    break;
+            }
+
+            Debug.Log("Secret number: " + secretNumber);
+            Debug.Log("\n\n");
+
             var endpoint = new EndpointDojoCallStruct
             {
                 account = DojoEntitiesStorage.currentAccount,
                 addressOfSystem = DojoEntitiesStorage.worldManagerData.knockoutContractAddress,
-                functionName = KnockoutContract.FunctionNames.Reveal.EnumToString(),
+                functionName = ChallengeActionsContract.FunctionNames.RevealMove.EnumToString(),
             };
 
-            var structData = new KnockoutContract.RevealMoveStruct
-            {
-                combat_id = DojoEntitiesStorage.knockoutCurrentGame.combatId,
-                move = lastMove,
-                salt = new FieldElement(secretNumber.ToString("X"))
-            };
+            var structData = new ChallengeActionsContract.RevealMoveStruct(challengeId: DojoEntitiesStorage.knockoutCurrentGame.combatId, move: lastMove, salt: new FieldElement(secretNumber));
 
-            var transaction = await KnockoutContract.RevealMove(structData, endpoint);
+            var transaction = await ChallengeActionsContract.RevealMoveCall(structData, endpoint);
 
             UpdateFrontEndData();
         }
@@ -476,55 +468,69 @@ public class BattlePageBehaviour : Menu
         }
     }
 
+    public void UpdateLastRound(LastRound lastRound)
+    {
+        Debug.Log("last round data");
+        Debug.Log("i am player " + playerLetter);
+        Debug.Log("combat id: " + lastRound.combatId.Hex());
+        Debug.Log("health a: " + lastRound.healthA);
+        Debug.Log("health b: " + lastRound.healthB);
+        Debug.Log("move a: " + lastRound.moveA);
+        Debug.Log("move b: " + lastRound.moveB);
+        Debug.Log("damage a: " + lastRound.damageA);
+        Debug.Log("damage b: " + lastRound.damageB);
+        Debug.Log("\n\n");
+    }
 
-
+    #region Animation region
     public void StartBloberLeftAnimation()
     {
         // Check if animation is already running
-        if (isBloberLeftAnimating) return;
+        if (_isBloberLeftAnimating) return;
 
-        tweenBloberLeft?.Kill(); // Safely kill any existing tween first
-        tweenBloberLeft = blobertLeft.DOAnchorPosY(originalPositionBloberLeft.y + 30, 0.4f)
+        _tweenBloberLeft?.Kill(); // Safely kill any existing tween first
+        _tweenBloberLeft = blobertLeft.DOAnchorPosY(originalPositionBloberLeft.y + 30, 0.4f)
             .SetLoops(-1, LoopType.Yoyo)
             .SetEase(Ease.InOutQuad);
 
-        isBloberLeftAnimating = true; // Set the flag
+        _isBloberLeftAnimating = true; // Set the flag
     }
-
     public void StopBloberLeftAnimation()
     {
         // Check if animation is already stopped
-        if (!isBloberLeftAnimating) return;
+        if (!_isBloberLeftAnimating) return;
 
-        tweenBloberLeft?.Kill();
+        _tweenBloberLeft?.Kill();
         blobertLeft.DOAnchorPosY(originalPositionBloberLeft.y, 0.4f).SetEase(Ease.OutQuad);
-        isBloberLeftAnimating = false; // Reset the flag
+        _isBloberLeftAnimating = false; // Reset the flag
     }
-
     public void StartBobertRightAnimation()
     {
         // Check if animation is already running
-        if (isBobertRightAnimating) return;
+        if (_isBobertRightAnimating) return;
 
-        tweenBobertRight?.Kill();
-        tweenBobertRight = blobertRight.DOAnchorPosY(originalPositionBobertRight.y + 25, 0.6f)
+        _tweenBobertRight?.Kill();
+        _tweenBobertRight = blobertRight.DOAnchorPosY(originalPositionBobertRight.y + 25, 0.6f)
             .SetLoops(-1, LoopType.Yoyo)
             .SetEase(Ease.InOutQuad);
 
-        isBobertRightAnimating = true; // Set the flag
+        _isBobertRightAnimating = true; // Set the flag
     }
-
     public void StopBobertRightAnimation()
     {
         // Check if animation is already stopped
-        if (!isBobertRightAnimating) return;
+        if (!_isBobertRightAnimating) return;
 
-        tweenBobertRight?.Kill();
+        _tweenBobertRight?.Kill();
         blobertRight.DOAnchorPosY(originalPositionBobertRight.y, 0.6f).SetEase(Ease.OutQuad);
-        isBobertRightAnimating = false; // Reset the flag
+        _isBobertRightAnimating = false; // Reset the flag
     }
+    #endregion
 
-
+    public void ReturnToMenuButton()
+    {
+        ClearDojoFightCache(true);
+    }
 
     private void ClearDojoFightCache(bool loss)
     {
@@ -534,6 +540,10 @@ public class BattlePageBehaviour : Menu
         DojoEntitiesStorage.lastRoundCurrentGame = null;
         DojoEntitiesStorage.knockoutCurrentGame = null;
         DojoEntitiesStorage.currentCombatId = null;
+
+        DojoEntitiesStorage.challengeInvite = null;
+        DojoEntitiesStorage.challengeResponse = null;
+        DojoEntitiesStorage.selectedChallengeID = null;
 
         if (loss)
         {

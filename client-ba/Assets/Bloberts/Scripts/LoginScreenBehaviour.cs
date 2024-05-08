@@ -1,10 +1,15 @@
 using DG.Tweening;
 using Dojo;
 using DojoContractCommunication;
+using System;
 using System.Collections;
+using System.Globalization;
+using System.Numerics;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using Random = UnityEngine.Random;
+using Vector3 = UnityEngine.Vector3;
 
 public class LoginScreenBehaviour : Menu
 {
@@ -91,7 +96,6 @@ public class LoginScreenBehaviour : Menu
            .SetLoops(-1, LoopType.Yoyo) 
            .SetEase(Ease.InOutQuad);
 
-        //delay to put here
         bobertRight.DOAnchorPosY(bobertRight.anchoredPosition.y + 25, 0.4f)
            .SetLoops(-1, LoopType.Yoyo)
            .SetEase(Ease.InOutQuad)
@@ -128,15 +132,19 @@ public class LoginScreenBehaviour : Menu
         {
             account = DojoEntitiesStorage.currentAccount,
             addressOfSystem = DojoEntitiesStorage.worldManagerData.blobertContractAddress,
-            functionName = BlobertContract.BlobertFunction.MintBlobert.EnumToString()
+            functionName = BlobertActionsContract.FunctionNames.Mint.EnumToString()
         };
 
-        var structData = new BlobertContract.MintBlobertStruct
+        var structData = new BlobertActionsContract.MintStruct
         {
             owner = DojoEntitiesStorage.currentAccount.Address
         };
 
-        var something = await BlobertContract.MintBlobert(structData, endpointData);
+        var something = await BlobertActionsContract.MintCall(structData, endpointData);
     }
+
+
+
+
 
 }

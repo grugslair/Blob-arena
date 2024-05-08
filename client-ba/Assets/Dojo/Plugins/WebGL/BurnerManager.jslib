@@ -43,16 +43,7 @@ mergeInto(LibraryManager.library, {
     },
 
   PedersenFunction: function(value1Ptr,value2Ptr) {
-    
       const hash = window.customStark.ec.starkCurve.pedersen(BigInt(value1Ptr), BigInt(value2Ptr));
-      console.log("js Side");
-      console.log("pedersan hash: " + hash);
-
-
-      // var numberAsString = BigInt(hash).toString();
-      // console.log("into big int : " + numberAsString);
-
-
       var buffer = _malloc(lengthBytesUTF8(hash) + 1);
       writeStringToMemory(hash, buffer);
       return buffer;

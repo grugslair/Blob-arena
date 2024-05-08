@@ -12,13 +12,14 @@ public class InvitationToLobby : MonoBehaviour
     {
         _challengeId = challengeId;
         _searchLobbyPageBehaviour = page;
+        //get the rect transfomr and set the scale to 1
+        gameObject.GetComponent<RectTransform>().localScale = Vector3.one;
 
         _lobbyDataText.text = $"{owner.Hex().Substring(0,7)}  ID: {BlobertUtils.HexToBigInt(blobId.Hex())}";
     }
 
     public void Accept()
     {
-        Debug.Log("called to accept");
         _searchLobbyPageBehaviour.SayYesToInvite(_challengeId);
     }
 

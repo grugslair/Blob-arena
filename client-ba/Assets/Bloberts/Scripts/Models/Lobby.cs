@@ -9,7 +9,7 @@ public class Lobby : ModelInstance
     public FieldElement combatId;
 
     [ModelField("amount")]
-    public BlobertUtils.U256 a;
+    public BlobertUtils.u256 a;
     [ModelField("blobert")]
     public Boolean b;
 

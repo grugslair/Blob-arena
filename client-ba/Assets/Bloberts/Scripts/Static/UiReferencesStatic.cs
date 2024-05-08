@@ -18,6 +18,8 @@ public static class UiReferencesStatic
 
     public static SelectBlobBehavior selectBlobBehavior { get; set; }
 
-    public static SearchLobbyPageBehaviour lobbyBehavior { get; set; }
+    public static InLobbyScreenPage lobbyBehavior { get; set; }
+
+    public static FullScaleBlobertInfo fullScaleBlobertInfo { get; set; }
 
 }

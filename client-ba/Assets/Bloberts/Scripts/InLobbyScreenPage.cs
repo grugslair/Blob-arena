@@ -1,5 +1,6 @@
 using DojoContractCommunication;
 using System.Collections;
+using System.Net;
 using TMPro;
 using UnityEngine;
 
@@ -16,9 +17,16 @@ public class InLobbyScreenPage : Menu
     [SerializeField] private TMP_Text _rightOwnerText;
     [SerializeField] private TMP_Text _rightBlobIdText;
 
-    [SerializeField]  private MenuManager _menuManager;
-    [SerializeField]  private Menu _battlePage;
+    [SerializeField] private MenuManager _menuManager;
 
+    [SerializeField] private Menu _battlePage;
+    [SerializeField] private Menu _searchLobbyPage;
+    [SerializeField] private Menu _createLobbyPage;
+
+    private void Start()
+    {
+        UiReferencesStatic.lobbyBehavior = this;
+    }
 
     private void OnEnable()
     {
@@ -55,21 +63,78 @@ public class InLobbyScreenPage : Menu
         }
     }
 
+ 
+    public void CurrentLobbyStateCheck()
+    {
+        if (DojoEntitiesStorage.challengeInvite != null)
+        {
+            if (DojoEntitiesStorage.challengeResponse.open == false)
+            {
+                if (DojoEntitiesStorage.challengeInvite.sender.Hex() == DojoEntitiesStorage.currentAccount.Address.Hex())
+                {
+                    _menuManager.OpenMenu(_createLobbyPage);
+                    DojoEntitiesStorage.challengeResponse = null;
+                }
+                else
+                {
+                    _menuManager.OpenMenu(_searchLobbyPage);
+                    DojoEntitiesStorage.selectedChallengeID = null;
+                    DojoEntitiesStorage.challengeResponse = null;
+                    DojoEntitiesStorage.challengeInvite = null;
+                }
+            }
+        }
+    }
+
     public void StartGame()
     {
         var endpoint = new EndpointDojoCallStruct
         {
             account = DojoEntitiesStorage.currentAccount,
             addressOfSystem = DojoEntitiesStorage.worldManagerData.challengeblobertContractAddress,
-            functionName = ChallengeContract.FunctionNames.AcceptResponse.EnumToString(),
+            functionName = ChallengeActionsContract.FunctionNames.AcceptResponse.EnumToString(),
         };
 
-        var dataStruct = new ChallengeContract.AcceptResponseStruct
+        var dataStruct = new ChallengeActionsContract.AcceptResponseStruct
         {
             challengeId = DojoEntitiesStorage.challengeInvite.challengeId,
         };
 
-        var transaction = ChallengeContract.AcceptResponse(dataStruct, endpoint);
+        var transaction = ChallengeActionsContract.AcceptResponseCall(dataStruct, endpoint);
+    }
+
+    public void AdminLeaveLobby()
+    {
+        var endpoint = new EndpointDojoCallStruct
+        {
+            account = DojoEntitiesStorage.currentAccount,
+            addressOfSystem = DojoEntitiesStorage.worldManagerData.challengeblobertContractAddress,
+            functionName = ChallengeActionsContract.FunctionNames.RejectResponse.EnumToString(),
+        };
+
+        var dataStruct = new ChallengeActionsContract.RejectResponseStruct
+        {
+            challengeId = DojoEntitiesStorage.challengeInvite.challengeId,
+        };
+
+        var transaction = ChallengeActionsContract.RejectResponseCall(dataStruct, endpoint);
+    }
+
+    public void UserCloseLobby()
+    {
+        var endpoint = new EndpointDojoCallStruct
+        {
+            account = DojoEntitiesStorage.currentAccount,
+            addressOfSystem = DojoEntitiesStorage.worldManagerData.challengeblobertContractAddress,
+            functionName = ChallengeActionsContract.FunctionNames.RescindResponse.EnumToString(),
+        };
+
+        var dataStruct = new ChallengeActionsContract.RescindResponseStruct
+        {
+            challengeId = DojoEntitiesStorage.challengeInvite.challengeId,
+        };
+
+        var transaction = ChallengeActionsContract.RescindResponseCall(dataStruct, endpoint);
     }
 
     private void Update()

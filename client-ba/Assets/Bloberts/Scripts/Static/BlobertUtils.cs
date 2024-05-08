@@ -6,7 +6,7 @@ using System.Runtime.InteropServices;
 public static class BlobertUtils
 {
     [Serializable]
-    public struct U256
+    public struct u256
     {
         public BigInteger high;
         public BigInteger low;
@@ -21,11 +21,10 @@ public static class BlobertUtils
 
     public enum Move
     {
-        Beat = 0,
-        Counter = 1,
-        Rush = 2
+        Beat,
+        Counter,
+        Rush
     }
-
 
     [Serializable]
     public struct Traits
@@ -191,9 +190,9 @@ public static class BlobertUtils
             case Mask.Pudgy:
                 return "pudgy";
             case Mask._3dGlasses:
-                return "3d_glasses";
+                return "_3d_glasses";
             case Mask._1337Skulls:
-                return "1337_skulls";
+                return "_1337_skulls";
             case Mask.AncientHelm:
                 return "ancient_helm";
             case Mask.Bane:

@@ -1,7 +1,6 @@
 using Dojo;
 using Dojo.Starknet;
 using Dojo.Torii;
-using UnityEngine;
 
 public class ChallengeInvite : ModelInstance
 {
@@ -19,6 +18,8 @@ public class ChallengeInvite : ModelInstance
     // Start is called before the first frame update
     void Start()
     {
+        DojoEntitiesStorage.challengeInvitesDict.Add(challengeId.Hex(), this);
+
         if (sender.Hex() == DojoEntitiesStorage.currentAccount.Address.Hex() && open)
         {
             DojoEntitiesStorage.challengeInvite = this;
@@ -32,9 +33,12 @@ public class ChallengeInvite : ModelInstance
         else if (receiver.Hex() == DojoEntitiesStorage.currentAccount.Address.Hex() && open)
         {
             DojoEntitiesStorage.userReceivedChallengeInvites.Add(this);
-        }
 
-        DojoEntitiesStorage.challengeInvitesDict.Add(challengeId.Hex(), this);
+            if (UiReferencesStatic.searchLobbyPageBehaviour != null)
+            {
+                UiReferencesStatic.searchLobbyPageBehaviour.RefreshInvitations();
+            }
+        }
     }
 
     public override void OnUpdate(Model model)
@@ -43,25 +47,24 @@ public class ChallengeInvite : ModelInstance
 
         if (!open && DojoEntitiesStorage.userReceivedChallengeInvites.Contains(this))
         {
+            DojoEntitiesStorage.userReceivedChallengeInvites.Remove(this);
+
             if (UiReferencesStatic.searchLobbyPageBehaviour != null)
             {
                 UiReferencesStatic.searchLobbyPageBehaviour.RefreshInvitations();
             }
-
-            DojoEntitiesStorage.userReceivedChallengeInvites.Remove(this);
         }
-        else if (!open && DojoEntitiesStorage.selectedChallengeID.Hex() == challengeId.Hex())
+        if (!open && DojoEntitiesStorage.selectedChallengeID != null)
         {
-            DojoEntitiesStorage.challengeInvite = null;
-            DojoEntitiesStorage.selectedChallengeID = null;
+            if (challengeId.Hex() == DojoEntitiesStorage.selectedChallengeID.Hex())
+            {
+                DojoEntitiesStorage.challengeInvite = null;
+                DojoEntitiesStorage.selectedChallengeID = null;
 
-            if (UiReferencesStatic.createLobbyBehavior != null)
-            {
-                UiReferencesStatic.createLobbyBehavior.CheckForActiveRequest();
-            }
-            else
-            {
-                Debug.Log("search lobby page is null");
+                if (UiReferencesStatic.createLobbyBehavior != null)
+                {
+                    UiReferencesStatic.createLobbyBehavior.CheckForActiveRequest();
+                }
             }
         }
     }

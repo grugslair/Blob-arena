@@ -30,29 +30,5 @@ public class Healths : ModelInstance
                 UiReferencesStatic.battlePageBehaviour.CallFromDataToUpdate();
             }
         }
-
-        //if (DojoEntitiesStorage.inLobbyRoundId != null)
-        //{
-        //    if (combatId.Hex() == DojoEntitiesStorage.inLobbyRoundId.Hex())
-        //    {
-        //        UiReferencesStatic.battlePageBehaviour.UpdateFrontEndData();
-        //    }
-        //}
-   
-        //if (DojoEntitiesStorage.inLobbyRoundId == null)
-        //{
-        //    return;
-        //}
-
-        //if (DojoEntitiesStorage.inLobbyRoundId.Hex() != combatId.Hex())
-        //{
-        //    return;
-        //}
-
-        //if (UiReferencesStatic.battlePageBehaviour != null)
-        //{
-        //    UiReferencesStatic.battlePageBehaviour.CallFromDataToUpdate();
-        //}
     }
-
 }

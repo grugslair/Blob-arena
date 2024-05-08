@@ -37,6 +37,8 @@ public static class DojoEntitiesStorage
     public static Dictionary<string, TwoMoves> twoMovesDict = new Dictionary<string, TwoMoves>();
 
     public static Dictionary<string, Blobert> allBlobertDict = new Dictionary<string, Blobert>();
+
+    public static Dictionary<string, ChallengeResponse> challengeResponseDict = new Dictionary<string, ChallengeResponse>();
     public static Dictionary<string,ChallengeInvite> challengeInvitesDict = new Dictionary<string, ChallengeInvite>();
 
 
