@@ -1,6 +1,6 @@
 using Dojo.Starknet;
-using DojoContractCommunication;
 using System;
+using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 
@@ -64,7 +64,7 @@ public class CreateLobbyBehavior : Menu
 
         var endpoint = new EndpointDojoCallStruct
         {
-            account = DojoEntitiesStorage.currentAccount,
+             
             addressOfSystem = DojoEntitiesStorage.worldManagerData.knockoutContractAddress,
             functionName = ,
         };
@@ -109,79 +109,98 @@ public class CreateLobbyBehavior : Menu
 
     public async void SendChallenge()
     {
-        //double secondsSinceLastCommit = (DateTime.Now - lastInteractionWithContract).TotalSeconds;
-
-        //if (secondsSinceLastCommit < 2)
-        //{
-        //    Debug.Log("You are creating a lobby too fast");
-        //    return;
-        //}
-        //else
-        //{
-        //    lastInteractionWithContract = DateTime.Now;
-        //}
-
-        //if (string.IsNullOrEmpty(inputFieldOtherPlayer.text))
-        //{
-        //    return;
-        //}
-
-        // this should send the invite
-
         Debug.Log("called the send challenge function");
 
-        var endpoint = new EndpointDojoCallStruct
+        var endpoint = new DojoContractCommunication.EndpointDojoCallStruct
         {
-            account = DojoEntitiesStorage.currentAccount,
             addressOfSystem = DojoEntitiesStorage.worldManagerData.challengeblobertContractAddress,
             functionName = ChallengeActionsContract.FunctionNames.SendInvite.EnumToString(),
         };
 
-        var dataStruct = new ChallengeActionsContract.SendInviteStruct
+        var structData = new ChallengeActionsContract.SendInviteStruct
         {
+            endpointData = endpoint,
             receiver = new FieldElement(inputFieldOtherPlayer.text),
             blobertId = DojoEntitiesStorage.userChoosenBlobert.dojoId,
         };
 
-        var transaction = await ChallengeActionsContract.SendInviteCall(dataStruct, endpoint);
+        var calls = new List<object>();
+        calls.Add(structData);
+
+        var transaction = await DojoContractCommunication.InvokeContract(calls, objectName: gameObject.name, functionName: "OnChainTransactionCallbackFunctionSC", account: DojoEntitiesStorage.currentAccount);
 
         CheckForActiveRequest();
     }
 
+    public void OnChainTransactionCallbackFunctionSC(string transactionHash)
+    {
+        Debug.Log("Transaction hash callback: " + transactionHash);
+    }
+
     public async void CancelSentInvite()
     {
-        var endpoint = new EndpointDojoCallStruct
+        var endpoint = new DojoContractCommunication.EndpointDojoCallStruct
         {
-            account = DojoEntitiesStorage.currentAccount,
             addressOfSystem = DojoEntitiesStorage.worldManagerData.challengeblobertContractAddress,
             functionName = ChallengeActionsContract.FunctionNames.RescindInvite.EnumToString(),
         };
 
         var dataStruct = new ChallengeActionsContract.RescindInviteStruct
         {
+            endpointData = endpoint,
             challengeId = DojoEntitiesStorage.selectedChallengeID,
         };
 
-        var transaction = await ChallengeActionsContract.RescindInviteCall(dataStruct, endpoint);
+        var calls = new List<object>();
+        calls.Add(dataStruct);
+
+        //var transaction = await ChallengeActionsContract.RescindInviteCall(dataStruct, endpoint);
+        var transaction = await DojoContractCommunication.InvokeContract(calls, objectName: gameObject.name, functionName: "OnChainTransactionCallbackFunctionCSI", account: DojoEntitiesStorage.currentAccount);
 
         CheckForActiveRequest();
     }
 
-    public void StartGame()
+    public void OnChainTransactionCallbackFunctionCSI(string transactionHash)
     {
-        var endpoint = new EndpointDojoCallStruct
+        Debug.Log("Transaction hash callback: " + transactionHash);
+        //if (transactionHash == "User abort" || transactionHash == "Execute failed")
+        //{
+        //    UiEntitiesReferenceManager.notificationManager.CreateNotification("Selling Outpost was aborted", null, 5f);
+        //    return;
+        //}
+    }
+
+    public async void StartGame()
+    {
+        var endpoint = new DojoContractCommunication.EndpointDojoCallStruct
         {
-            account = DojoEntitiesStorage.currentAccount,
+             
             addressOfSystem = DojoEntitiesStorage.worldManagerData.challengeblobertContractAddress,
-            functionName = ChallengeActionsContract.FunctionNames.AcceptResponse.EnumToString(),
+            functionName = ChallengeActionsContract.FunctionNames.AcceptResponse.EnumToString()
         };
 
         var dataStruct = new ChallengeActionsContract.AcceptResponseStruct
         {
+            endpointData = endpoint,
             challengeId = new FieldElement(inputFieldOtherPlayer.text),
         };
 
-        var transaction = ChallengeActionsContract.AcceptResponseCall(dataStruct, endpoint);
+        var calls = new List<object>();
+        calls.Add(dataStruct);
+
+        var transaction = await DojoContractCommunication.InvokeContract(calls, objectName: gameObject.name, functionName: "OnChainTransactionCallbackFunctionSG", account: DojoEntitiesStorage.currentAccount);
+
+        //var transaction = ChallengeActionsContract.AcceptResponseCall(dataStruct, endpoint);
+    }
+
+    public void OnChainTransactionCallbackFunctionSG(string transactionHash)
+    {
+        Debug.Log("Transaction hash callback: " + transactionHash);
+        //if (transactionHash == "User abort" || transactionHash == "Execute failed")
+        //{
+        //    UiEntitiesReferenceManager.notificationManager.CreateNotification("Selling Outpost was aborted", null, 5f);
+        //    return;
+        //}
     }
 
     void Update()

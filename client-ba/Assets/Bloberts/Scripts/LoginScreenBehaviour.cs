@@ -1,10 +1,7 @@
 using DG.Tweening;
 using Dojo;
-using DojoContractCommunication;
-using System;
 using System.Collections;
-using System.Globalization;
-using System.Numerics;
+using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -128,20 +125,27 @@ public class LoginScreenBehaviour : Menu
 
     public async void MintBlobert()
     {
-        var endpointData = new EndpointDojoCallStruct
+        var endpointData = new DojoContractCommunication.EndpointDojoCallStruct
         {
-            account = DojoEntitiesStorage.currentAccount,
             addressOfSystem = DojoEntitiesStorage.worldManagerData.blobertContractAddress,
-            functionName = BlobertActionsContract.FunctionNames.Mint.EnumToString()
+            functionName = BlobertActionsContract.FunctionNames.Mint.EnumToString(),
         };
 
-        var structData = new BlobertActionsContract.MintStruct
-        {
-            owner = DojoEntitiesStorage.currentAccount.Address
-        };
+        var structData = new BlobertActionsContract.MintStruct (DojoEntitiesStorage.currentAccount.Address,endpointData : endpointData);
+     
+        var calls = new List<object>();
+        calls.Add(structData);
 
-        var something = await BlobertActionsContract.MintCall(structData, endpointData);
+        var transaction = await DojoContractCommunication.InvokeContract(calls, gameObject.name, "OnChainTransactionCallbackFunctionM", account: DojoEntitiesStorage.currentAccount);
     }
+
+    public void OnChainTransactionCallbackFunctionM(string transactionHash)
+    {
+        Debug.Log("Transaction hash callback: " + transactionHash);
+    }
+
+    
+
 
 
 

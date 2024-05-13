@@ -21,7 +21,7 @@ public class ChatManager : MonoBehaviour
     private TMPro.TMP_InputField chatInput;
 
     // Start is called before the first frame update
-    async void Start()
+    private void Start()
     {
         chatInput = GetComponentInChildren<TMPro.TMP_InputField>(true);
         chatInput.gameObject.SetActive(false);

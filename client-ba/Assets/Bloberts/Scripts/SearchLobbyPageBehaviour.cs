@@ -1,5 +1,5 @@
 using Dojo.Starknet;
-using DojoContractCommunication;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class SearchLobbyPageBehaviour : Menu
@@ -60,44 +60,44 @@ public class SearchLobbyPageBehaviour : Menu
 
     public async void SayNoToInvite(FieldElement challengeID)
     {
-        var endpoint = new EndpointDojoCallStruct
+        var endpoint = new DojoContractCommunication.EndpointDojoCallStruct
         {
-            account = DojoEntitiesStorage.currentAccount,
             addressOfSystem = DojoEntitiesStorage.worldManagerData.challengeblobertContractAddress,
             functionName = ChallengeActionsContract.FunctionNames.RejectInvite.EnumToString(),
         };
 
         var dataStruct = new ChallengeActionsContract.RejectInviteStruct
         {
+            endpointData = endpoint,
             challengeId = challengeID,
         };
 
-        var transaction = await ChallengeActionsContract.RejectInviteCall(dataStruct, endpoint);
+        var calls = new List<object>();
+        calls.Add(dataStruct);
+
+        var transaction = await DojoContractCommunication.InvokeContract(calls, gameObject.name, "OnChainTransactionCallbackFunctionSN", account: DojoEntitiesStorage.currentAccount);
     }
 
     public async void SayYesToInvite(FieldElement challengeID)
     {
-        var endpoint = new EndpointDojoCallStruct
+        var endpoint = new DojoContractCommunication.EndpointDojoCallStruct
         {
-            account = DojoEntitiesStorage.currentAccount,
             addressOfSystem = DojoEntitiesStorage.worldManagerData.challengeblobertContractAddress,
             functionName = ChallengeActionsContract.FunctionNames.RespondInvite.EnumToString(),
         };
 
         var dataStruct = new ChallengeActionsContract.RespondInviteStruct
         {
+            endpointData = endpoint,
             challengeId = challengeID,
             blobertId = DojoEntitiesStorage.userChoosenBlobert.dojoId,
         };
 
         DojoEntitiesStorage.selectedChallengeID = challengeID;
 
-        var transaction = await ChallengeActionsContract.RespondInviteCall(dataStruct, endpoint);
+        var calls = new List<object>();
+        calls.Add(dataStruct);
 
-        if (transaction != null)
-        {
-            Debug.Log("not null and should be opening lobby");
-            DojoEntitiesStorage.challengeInvite = DojoEntitiesStorage.challengeInvitesDict[challengeID.Hex()];
-        }
+        var transaction = await DojoContractCommunication.InvokeContract(calls, gameObject.name, "OnChainTransactionCallbackFunctionSY", account: DojoEntitiesStorage.currentAccount);
     }
 }

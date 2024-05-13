@@ -58,7 +58,7 @@ public class LeaderBoardPageBehaviour : Menu
 
         for (int i = 0; i < _listOfPodiumPlaces.Count; i++)
         {
-            if (i >= sortedListForTotWins.Length - 1)
+            if (i >= sortedListForTotWins.Length)
             {
                 _listOfPodiumPlaces[i].SetActive(false);
             }
@@ -74,21 +74,21 @@ public class LeaderBoardPageBehaviour : Menu
 
     public static ChallengeScore[] SortByWins(List<ChallengeScore> scores)
     {
-        return scores.OrderBy(score => score.dojoWins).ToArray();
+        return scores.OrderByDescending(score => score.dojoWins).ToArray();
     }
 
     public static ChallengeScore[] SortByLosses(List<ChallengeScore> scores)
     {
-        return scores.OrderBy(score => score.dojoLosses).ToArray();
+        return scores.OrderByDescending(score => score.dojoLosses).ToArray();
     }
 
     public static ChallengeScore[] SortByMaxConsecutiveWins(List<ChallengeScore> scores)
     {
-        return scores.OrderBy(score => score.dojoMaxConsecutiveWins).ToArray();
+        return scores.OrderByDescending(score => score.dojoMaxConsecutiveWins).ToArray();
     }
 
     public static ChallengeScore[] SortByCurrentConsecutiveWins(List<ChallengeScore> scores)
     {
-        return scores.OrderBy(score => score.dojoCurrentConsecutiveWins).ToArray();
+        return scores.OrderByDescending(score => score.dojoCurrentConsecutiveWins).ToArray();
     }
 }

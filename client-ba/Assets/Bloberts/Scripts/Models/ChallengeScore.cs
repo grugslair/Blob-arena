@@ -12,6 +12,7 @@ public class ChallengeScore : ModelInstance
 
     [ModelField("blobert_id")]
     public FieldElement dojoBlobertId;
+
     [ModelField("wins")]
     public UInt64 dojoWins;
 

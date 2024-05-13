@@ -1,3 +1,7 @@
+using QueryStructure;
+using SimpleGraphQL;
+using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class UiStateManager : MonoBehaviour
@@ -176,6 +180,112 @@ public class UiStateManager : MonoBehaviour
             Debug.Log("prob a double debug log");
             Debug.Log(keys);
         }
+    }
+
+
+
+    public async void TestFunction()
+    {
+        var client = new GraphQLClient($"http://localhost:8080/graphql");
+
+
+        var blobertGQLNoInput = QueryManagerUtils.QueryNoInput(QueryManagerUtils.blobertGraphQLQuery);
+
+
+
+        Debug.Log(blobertGQLNoInput);
+        //dictionary of string 
+        var variables = new Dictionary<string, string>
+        {
+            { "id", "\"1\"" },
+            {"owner", "\"0x7bb970411262d19d5d9e098a145d4de47a54daef4a547b484b637ecdd39a590\"" }
+        };
+        var where = QueryManagerUtils.CreateWhereClause(variables);
+
+        var order = QueryManagerUtils.CreateOrderClause(new Dictionary<string, string>
+        {
+            { "direction", "ASC" },
+            { "field", "ID" }
+        });
+        Debug.Log(order);
+        Debug.Log(where);
+
+
+        var blobertGQLWithInput = QueryManagerUtils.QueryWithInput(QueryManagerUtils.blobertGraphQLQuery, new List<string>
+        {
+            order,
+            where
+        });
+
+        Debug.Log(blobertGQLWithInput);
+        
+        var tradesRequest = new Request
+        {
+            Query = blobertGQLNoInput,
+        };
+
+        var responseType = new
+        {
+            blobertModels = Models<QueryStructure.BlobertData>.CreateModel(() => new BlobertData
+            {
+                __typename = "",
+                owner = "",
+                id = "",
+                traits = new QueryStructure.Traits
+                {
+                    armour = "",
+                    background = "",
+                    jewelry = "",
+                    mask = "",
+                    weapon = ""
+                },
+                stats = new QueryStructure.Stats
+                {
+                    attack = "",
+                    defense = "",
+                    speed = "",
+                    strength = ""
+                }
+            })
+        };
+
+        var response = await client.Send(() => responseType, tradesRequest);
+
+        //Debug.Log(response.Data.blobertModels);
+        //Debug.Log(response.Data.blobertModels);
+        //Debug.Log(response.Data.blobertModels.edges[0].Node.Entity.Models[0].owner);
+
+        //var edges = response.Data.blobertModels.edges;
+
+        //for (int i = 0; i < edges.Length; i++)
+        //{
+        //    var entity = edges[i].Node.Entity;
+
+        //    for (int x = 0; x < entity.Models.Length; x++)
+        //    {
+        //        if (entity.Models[x].__typename == "Blobert")
+        //        {
+        //            Debug.Log("there is a blobert");
+        //            Debug.Log(entity.Models[x].owner);
+        //            Debug.Log(entity.Models[x].id);
+
+        //            Debug.Log("traits");
+        //            Debug.Log(entity.Models[x].traits.background);
+        //            Debug.Log(entity.Models[x].traits.mask);
+        //            Debug.Log(entity.Models[x].traits.weapon);
+        //            Debug.Log(entity.Models[x].traits.armour);
+        //            Debug.Log(entity.Models[x].traits.jewelry);
+                
+        //            Debug.Log("stats");
+        //            Debug.Log(entity.Models[x].stats.defense);
+        //            Debug.Log(entity.Models[x].stats.speed);
+        //            Debug.Log(entity.Models[x].stats.attack);
+        //            Debug.Log(entity.Models[x].stats.strength);
+                    
+        //            Debug.Log("\n\n");
+        //        }
+        //    }
+        //}
     }
 }
 

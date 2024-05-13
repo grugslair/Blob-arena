@@ -2,507 +2,462 @@
 using Dojo.Starknet;
 using dojo_bindings;
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Numerics;
+using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
+using static DojoContractCommunication;
+using static JSInteropManager;
 
-namespace DojoContractCommunication
+public static class DojoContractCommunication
 {
+    // what could be interesting is maybe send the function not the name but mayeb get the name as they both takje in the string
+
+    public enum WalletType
+    {
+        BURNER,
+        ARGENT_X,
+        BRAAVOS
+    }
+
+    public static WalletType selectedWalletType { get; set; }
+
     public struct EndpointDojoCallStruct
     {
-        public Account account;
         public string functionName;
         public string addressOfSystem;
-    }
 
-    public static class BlobertActionsContract
-    {
-
-        public enum FunctionNames
+        public EndpointDojoCallStruct(string functionName, string addressOfSystem)
         {
-            Mint,
-
-        }
-
-        public static string EnumToString(this FunctionNames functionName)
-        {
-            switch (functionName)
-            {
-
-                case FunctionNames.Mint:
-                    return "mint";
-
-
-                default:
-                    return "";
-            }
-        }
-
-        public struct MintStruct
-        {
-            public FieldElement owner;
-
-
-            public MintStruct(FieldElement owner)
-            {
-                this.owner = owner;
-
-            }
-        }
-
-        public static async Task<FieldElement> MintCall(MintStruct dataStruct, EndpointDojoCallStruct endpointData)
-        {
-            try
-            {
-                var transaction = await endpointData.account.ExecuteRaw(new dojo.Call[]
-                {
-                new dojo.Call
-                {
-                    calldata = new dojo.FieldElement[]
-                    {
-                       dataStruct.owner.Inner,
-
-                    },
-                    selector = endpointData.functionName,
-                    to = endpointData.addressOfSystem,
-                }
-                });
-
-                return transaction;
-            }
-            catch (Exception ex)
-            {
-                Debug.Log("issue with Mint" + ex.Message);
-                return null;
-            }
+            this.functionName = functionName;
+            this.addressOfSystem = addressOfSystem;
         }
     }
 
-    public static class ChallengeActionsContract
+    [Serializable]
+    public class ContractCall
     {
+        public string contractAddress;
+        public string entrypoint;
+        public string[] calldata;
 
-        public enum FunctionNames
+        //make a constructor
+        public ContractCall(string contractAddress, string entrypoint, string[] calldata)
         {
-            SendInvite,
-            RescindInvite,
-            RespondInvite,
-            RescindResponse,
-            RejectInvite,
-            RejectResponse,
-            AcceptResponse,
-            CommitMove,
-            RevealMove,
-
+            this.contractAddress = contractAddress;
+            this.entrypoint = entrypoint;
+            this.calldata = calldata;
         }
+    }
 
-        public static string EnumToString(this FunctionNames functionName)
+    public async static Task<FieldElement> InvokeContract(List<object> structInstances, string objectName = "", string functionName = "", Account account = null)
+    {
+        if (selectedWalletType == WalletType.BURNER)
         {
-            switch (functionName)
+            if (account == null)
             {
-
-                case FunctionNames.SendInvite:
-                    return "send_invite";
-
-
-                case FunctionNames.RescindInvite:
-                    return "rescind_invite";
-
-
-                case FunctionNames.RespondInvite:
-                    return "respond_invite";
-
-
-                case FunctionNames.RescindResponse:
-                    return "rescind_response";
-
-
-                case FunctionNames.RejectInvite:
-                    return "reject_invite";
-
-
-                case FunctionNames.RejectResponse:
-                    return "reject_response";
-
-
-                case FunctionNames.AcceptResponse:
-                    return "accept_response";
-
-
-                case FunctionNames.CommitMove:
-                    return "commit_move";
-
-
-                case FunctionNames.RevealMove:
-                    return "reveal_move";
-
-
-                default:
-                    return "";
-            }
-        }
-
-
-        public struct SendInviteStruct
-        {
-            public FieldElement receiver;
-            public FieldElement blobertId;
-
-
-            public SendInviteStruct(FieldElement receiver, FieldElement blobertId)
-            {
-                this.receiver = receiver;
-                this.blobertId = blobertId;
-
-            }
-        }
-
-        public struct RescindInviteStruct
-        {
-            public FieldElement challengeId;
-
-
-            public RescindInviteStruct(FieldElement challengeId)
-            {
-                this.challengeId = challengeId;
-
-            }
-        }
-
-        public struct RespondInviteStruct
-        {
-            public FieldElement challengeId;
-            public FieldElement blobertId;
-
-
-            public RespondInviteStruct(FieldElement challengeId, FieldElement blobertId)
-            {
-                this.challengeId = challengeId;
-                this.blobertId = blobertId;
-
-            }
-        }
-
-        public struct RescindResponseStruct
-        {
-            public FieldElement challengeId;
-
-
-            public RescindResponseStruct(FieldElement challengeId)
-            {
-                this.challengeId = challengeId;
-
-            }
-        }
-
-        public struct RejectInviteStruct
-        {
-            public FieldElement challengeId;
-
-
-            public RejectInviteStruct(FieldElement challengeId)
-            {
-                this.challengeId = challengeId;
-
-            }
-        }
-
-        public struct RejectResponseStruct
-        {
-            public FieldElement challengeId;
-
-
-            public RejectResponseStruct(FieldElement challengeId)
-            {
-                this.challengeId = challengeId;
-
-            }
-        }
-
-        public struct AcceptResponseStruct
-        {
-            public FieldElement challengeId;
-
-
-            public AcceptResponseStruct(FieldElement challengeId)
-            {
-                this.challengeId = challengeId;
-
-            }
-        }
-
-        public struct CommitMoveStruct
-        {
-            public FieldElement challengeId;
-            public FieldElement hash;
-
-            public CommitMoveStruct(FieldElement challengeId, FieldElement hash)
-            {
-                this.challengeId = challengeId;
-                this.hash = hash;
-            }
-        }
-
-        public struct RevealMoveStruct
-        {
-            public FieldElement challengeId;
-            public BlobertUtils.Move move;
-            public FieldElement salt;
-
-            public RevealMoveStruct(FieldElement challengeId, BlobertUtils.Move move, FieldElement salt)
-            {
-                this.challengeId = challengeId;
-                this.move = move;
-                this.salt = salt;
-
-            }
-        }
-
-        public static async Task<FieldElement> SendInviteCall(SendInviteStruct dataStruct, EndpointDojoCallStruct endpointData)
-        {
-            try
-            {
-                var transaction = await endpointData.account.ExecuteRaw(new dojo.Call[]
-                {
-                new dojo.Call
-                {
-                    calldata = new dojo.FieldElement[]
-                    {
-                       dataStruct.receiver.Inner,
-                        dataStruct.blobertId.Inner,
-                    },
-                    selector = endpointData.functionName,
-                    to = endpointData.addressOfSystem,
-                }
-                });
-
-                return transaction;
-            }
-            catch (Exception ex)
-            {
-                Debug.Log("issue with SendInvite" + ex.Message);
+                Debug.LogError("Account is null, cannot execute contract calls.");
                 return null;
             }
-        }
 
-        public static async Task<FieldElement> RescindInviteCall(RescindInviteStruct dataStruct, EndpointDojoCallStruct endpointData)
-        {
-            try
+            var calls = new List<dojo.Call>();
+
+            foreach (var structInstance in structInstances)
             {
-                var transaction = await endpointData.account.ExecuteRaw(new dojo.Call[]
+                if (structInstance == null)
                 {
-                new dojo.Call
-                {
-                    calldata = new dojo.FieldElement[]
-                    {
-                       dataStruct.challengeId.Inner,
-
-                    },
-                    selector = endpointData.functionName,
-                    to = endpointData.addressOfSystem,
+                    Debug.LogWarning("Encountered a null instance in the list, skipping.");
+                    continue;
                 }
-                });
 
-                return transaction;
+                Type structType = structInstance.GetType();
+
+                var endpointData = (EndpointDojoCallStruct)structType
+                    .GetField("endpointData")
+                    ?.GetValue(structInstance);
+
+                var fields = structType.GetFields().Where(f => f.Name != "endpointData").ToArray();
+
+                var calldata = new List<dojo.FieldElement>();
+
+                foreach (var field in fields)
+                {
+                    var fieldValue = field.GetValue(structInstance);
+                    switch (fieldValue)
+                    {
+                        case FieldElement fe:
+                            calldata.Add(fe.Inner);
+                            break;
+                        case byte by:
+                            calldata.Add(new FieldElement(by.ToString("X")).Inner);
+                            break;
+                        case UInt16 u16:
+                            calldata.Add(new FieldElement(u16.ToString("X")).Inner);
+                            break;
+                        case UInt32 u32:
+                            calldata.Add(new FieldElement(u32.ToString("X")).Inner);
+                            break;
+                        case UInt64 u64:
+                            calldata.Add(new FieldElement(u64.ToString("X")).Inner);
+                            break;
+                        case BigInteger bi:
+                            calldata.Add(new FieldElement(bi.ToString("X")).Inner);
+                            break;
+                        case bool bo:
+                            //calldata.Add(new FieldElement(bo.ToString("X")).Inner);
+                            break;
+                        default:
+                            Debug.LogError($"Unsupported field type: {fieldValue.GetType().Name}");
+                            break;
+                    }
+                }
+
+                // Add the call to the list
+                calls.Add(new dojo.Call
+                {
+                    calldata = calldata.ToArray(),
+                    selector = endpointData.functionName,
+                    to = endpointData.addressOfSystem
+                });
             }
-            catch (Exception ex)
+
+            return await InvokeViaBurner(calls, account);
+        }
+        else
+        {
+            if (string.IsNullOrEmpty(objectName) || string.IsNullOrEmpty(functionName))
             {
-                Debug.Log("issue with RescindInvite" + ex.Message);
+                Debug.LogError("Object name or function name is empty, cannot execute contract calls.");
                 return null;
             }
-        }
 
-        public static async Task<FieldElement> RespondInviteCall(RespondInviteStruct dataStruct, EndpointDojoCallStruct endpointData)
-        {
-            try
+            var calls = new List<ContractCall>();
+
+            foreach (var structInstance in structInstances)
             {
-                var transaction = await endpointData.account.ExecuteRaw(new dojo.Call[]
+                if (structInstance == null)
                 {
-                new dojo.Call
-                {
-                    calldata = new dojo.FieldElement[]
-                    {
-                       dataStruct.challengeId.Inner,
-dataStruct.blobertId.Inner,
-
-                    },
-                    selector = endpointData.functionName,
-                    to = endpointData.addressOfSystem,
+                    Debug.LogWarning("Encountered a null instance in the list, skipping.");
+                    continue;
                 }
-                });
 
-                return transaction;
-            }
-            catch (Exception ex)
-            {
-                Debug.Log("issue with RespondInvite" + ex.Message);
-                return null;
-            }
-        }
+                Type structType = structInstance.GetType();
 
-        public static async Task<FieldElement> RescindResponseCall(RescindResponseStruct dataStruct, EndpointDojoCallStruct endpointData)
-        {
-            try
-            {
-                var transaction = await endpointData.account.ExecuteRaw(new dojo.Call[]
+                var endpointData = (EndpointDojoCallStruct)structType
+                    .GetField("endpointData")
+                    ?.GetValue(structInstance);
+
+                var fields = structType.GetFields().Where(f => f.Name != "endpointData").ToArray();
+
+                var calldata = new List<string>();
+
+                foreach (var field in fields)
                 {
-                new dojo.Call
-                {
-                    calldata = new dojo.FieldElement[]
+                    var fieldValue = field.GetValue(structInstance);
+                    switch (fieldValue)
                     {
-                       dataStruct.challengeId.Inner,
-
-                    },
-                    selector = endpointData.functionName,
-                    to = endpointData.addressOfSystem,
+                        case FieldElement fe:
+                            calldata.Add(fe.Hex());
+                            break;
+                        case byte by:
+                            calldata.Add(by.ToString());
+                            break;
+                        case UInt16 u16:
+                            calldata.Add(u16.ToString());
+                            break;
+                        case UInt32 u32:
+                            calldata.Add(u32.ToString());
+                            break;
+                        case UInt64 u64:
+                            calldata.Add(u64.ToString());
+                            break;
+                        case BigInteger bi:
+                            calldata.Add(bi.ToString());
+                            calldata.Add("0");
+                            break;
+                        case bool bo:
+                            //calldata.Add(new FieldElement(bo.ToString("X")).Inner);
+                            Debug.LogError("bool has yet to be implemented, message alex");
+                            break;
+                        default:
+                            Debug.LogError($"Unsupported field type: {fieldValue.GetType().Name}");
+                            break;
+                    }
                 }
-                });
 
-                return transaction;
+                calls.Add(new ContractCall(calldata: calldata.ToArray(), contractAddress: endpointData.addressOfSystem, entrypoint: endpointData.functionName));
             }
-            catch (Exception ex)
-            {
-                Debug.Log("issue with RescindResponse" + ex.Message);
-                return null;
-            }
+
+            return await InvokeViaWallet(calls, objectName, functionName);
         }
+    }
 
-        public static async Task<FieldElement> RejectInviteCall(RejectInviteStruct dataStruct, EndpointDojoCallStruct endpointData)
+    public async static Task<FieldElement> InvokeViaBurner(List<dojo.Call> callsData, Account account)
+    {
+        Debug.Log("InvokeViaBurner");
+        return await account.ExecuteRaw(callsData.ToArray());
+    }
+
+    public async static Task<FieldElement> InvokeViaWallet(List<ContractCall> callsData, string objectName, string callBackFunc)
+    {
+        foreach (var call in callsData)
         {
-            try
-            {
-                var transaction = await endpointData.account.ExecuteRaw(new dojo.Call[]
-                {
-                new dojo.Call
-                {
-                    calldata = new dojo.FieldElement[]
-                    {
-                       dataStruct.challengeId.Inner,
-
-                    },
-                    selector = endpointData.functionName,
-                    to = endpointData.addressOfSystem,
-                }
-                });
-
-                return transaction;
-            }
-            catch (Exception ex)
-            {
-                Debug.Log("issue with RejectInvite" + ex.Message);
-                return null;
-            }
+            Debug.Log($"Contract address: {call.contractAddress}, entrypoint: {call.entrypoint}, calldata: {string.Join(", ", call.calldata)}");
         }
 
-        public static async Task<FieldElement> RejectResponseCall(RejectResponseStruct dataStruct, EndpointDojoCallStruct endpointData)
+        SendMultiCallTransaction(BuildCallsJsString(callsData.ToArray()), objectName, callBackFunc);
+
+        return new FieldElement("0");
+    }
+
+    public static string BuildCallsJsString(ContractCall[] calls)
+    {
+        var sb = new StringBuilder();
+        sb.Append("[");
+
+        for (int i = 0; i < calls.Length; i++)
         {
-            try
-            {
-                var transaction = await endpointData.account.ExecuteRaw(new dojo.Call[]
-                {
-                new dojo.Call
-                {
-                    calldata = new dojo.FieldElement[]
-                    {
-                       dataStruct.challengeId.Inner,
+            var call = calls[i];
+            sb.Append("{");
+            sb.AppendFormat("contractAddress: \"{0}\", ", call.contractAddress);
+            sb.AppendFormat("entrypoint: \"{0}\", ", call.entrypoint);
+            sb.Append("calldata: [");
+            sb.Append(string.Join(", ", call.calldata.Select(d => $"\"{d}\"")));
+            sb.Append("]");
+            sb.Append("}");
 
-                    },
-                    selector = endpointData.functionName,
-                    to = endpointData.addressOfSystem,
-                }
-                });
-
-                return transaction;
-            }
-            catch (Exception ex)
+            if (i < calls.Length - 1)
             {
-                Debug.Log("issue with RejectResponse" + ex.Message);
-                return null;
+                sb.Append(", ");
             }
         }
 
-        public static async Task<FieldElement> AcceptResponseCall(AcceptResponseStruct dataStruct, EndpointDojoCallStruct endpointData)
+        sb.Append("]");
+
+        return sb.ToString();
+    }
+}
+
+
+public static class BlobertActionsContract
+{
+
+    public enum FunctionNames
+    {
+        Mint,
+
+    }
+
+    public static string EnumToString(this FunctionNames functionName)
+    {
+        switch (functionName)
         {
-            try
-            {
-                var transaction = await endpointData.account.ExecuteRaw(new dojo.Call[]
-                {
-                new dojo.Call
-                {
-                    calldata = new dojo.FieldElement[]
-                    {
-                       dataStruct.challengeId.Inner,
 
-                    },
-                    selector = endpointData.functionName,
-                    to = endpointData.addressOfSystem,
-                }
-                });
+            case FunctionNames.Mint:
+                return "mint";
 
-                return transaction;
-            }
-            catch (Exception ex)
-            {
-                Debug.Log("issue with AcceptResponse" + ex.Message);
-                return null;
-            }
+
+            default:
+                return "";
         }
+    }
 
-        public static async Task<FieldElement> CommitMoveCall(CommitMoveStruct dataStruct, EndpointDojoCallStruct endpointData)
+
+    public struct MintStruct
+    {
+        public FieldElement owner;
+        public EndpointDojoCallStruct endpointData;
+
+        public MintStruct(FieldElement owner, EndpointDojoCallStruct endpointData)
         {
-            try
-            {
-                var transaction = await endpointData.account.ExecuteRaw(new dojo.Call[]
-                {
-                new dojo.Call
-                {
-                    calldata = new dojo.FieldElement[]
-                    {
-                       dataStruct.challengeId.Inner,
-dataStruct.hash.Inner,
-
-                    },
-                    selector = endpointData.functionName,
-                    to = endpointData.addressOfSystem,
-                }
-                });
-
-                return transaction;
-            }
-            catch (Exception ex)
-            {
-                Debug.Log("issue with CommitMove" + ex.Message);
-                return null;
-            }
+            this.owner = owner;
+            this.endpointData = endpointData;
         }
+    }
 
-        public static async Task<FieldElement> RevealMoveCall(RevealMoveStruct dataStruct, EndpointDojoCallStruct endpointData)
+}
+
+public static class ChallengeActionsContract
+{
+
+    public enum FunctionNames
+    {
+        SendInvite,
+        RescindInvite,
+        RespondInvite,
+        RescindResponse,
+        RejectInvite,
+        RejectResponse,
+        AcceptResponse,
+        CommitMove,
+        RevealMove,
+    }
+
+    public static string EnumToString(this FunctionNames functionName)
+    {
+        switch (functionName)
         {
-            try
-            {
-                var transaction = await endpointData.account.ExecuteRaw(new dojo.Call[]
-                {
-                new dojo.Call
-                {
-                    calldata = new dojo.FieldElement[]
-                    {
-                       dataStruct.challengeId.Inner,
-new FieldElement(dataStruct.move.ToString("X")).Inner,
-dataStruct.salt.Inner,
 
-                    },
-                    selector = endpointData.functionName,
-                    to = endpointData.addressOfSystem,
-                }
-                });
+            case FunctionNames.SendInvite:
+                return "send_invite";
 
-                return transaction;
-            }
-            catch (Exception ex)
-            {
-                Debug.Log("issue with RevealMove" + ex.Message);
-                return null;
-            }
+
+            case FunctionNames.RescindInvite:
+                return "rescind_invite";
+
+
+            case FunctionNames.RespondInvite:
+                return "respond_invite";
+
+
+            case FunctionNames.RescindResponse:
+                return "rescind_response";
+
+
+            case FunctionNames.RejectInvite:
+                return "reject_invite";
+
+
+            case FunctionNames.RejectResponse:
+                return "reject_response";
+
+
+            case FunctionNames.AcceptResponse:
+                return "accept_response";
+
+
+            case FunctionNames.CommitMove:
+                return "commit_move";
+
+
+            case FunctionNames.RevealMove:
+                return "reveal_move";
+
+
+            default:
+                return "";
         }
+    }
 
+
+    public struct SendInviteStruct
+    {
+        public FieldElement receiver;
+        public FieldElement blobertId;
+        public EndpointDojoCallStruct endpointData;
+
+        public SendInviteStruct(FieldElement receiver, FieldElement blobertId, EndpointDojoCallStruct endpointData)
+        {
+            this.receiver = receiver;
+            this.blobertId = blobertId;
+            this.endpointData = endpointData;
+        }
+    }
+
+    public struct RescindInviteStruct
+    {
+        public FieldElement challengeId;
+        public EndpointDojoCallStruct endpointData;
+
+        public RescindInviteStruct(FieldElement challengeId, EndpointDojoCallStruct endpointData)
+        {
+            this.challengeId = challengeId;
+            this.endpointData = endpointData;
+        }
+    }
+
+    public struct RespondInviteStruct
+    {
+        public FieldElement challengeId;
+        public FieldElement blobertId;
+        public EndpointDojoCallStruct endpointData;
+
+        public RespondInviteStruct(FieldElement challengeId, FieldElement blobertId, EndpointDojoCallStruct endpointData)
+        {
+            this.challengeId = challengeId;
+            this.blobertId = blobertId;
+            this.endpointData = endpointData;
+        }
+    }
+
+    public struct RescindResponseStruct
+    {
+        public FieldElement challengeId;
+        public EndpointDojoCallStruct endpointData;
+
+        public RescindResponseStruct(FieldElement challengeId, EndpointDojoCallStruct endpointData)
+        {
+            this.challengeId = challengeId;
+            this.endpointData = endpointData;
+        }
+    }
+
+    public struct RejectInviteStruct
+    {
+        public FieldElement challengeId;
+        public EndpointDojoCallStruct endpointData;
+
+        public RejectInviteStruct(FieldElement challengeId, EndpointDojoCallStruct endpointData)
+        {
+            this.challengeId = challengeId;
+            this.endpointData = endpointData;
+        }
+    }
+
+    public struct RejectResponseStruct
+    {
+        public FieldElement challengeId;
+        public EndpointDojoCallStruct endpointData;
+
+        public RejectResponseStruct(FieldElement challengeId, EndpointDojoCallStruct endpointData)
+        {
+            this.challengeId = challengeId;
+            this.endpointData = endpointData;
+        }
+    }
+
+    public struct AcceptResponseStruct
+    {
+        public FieldElement challengeId;
+        public EndpointDojoCallStruct endpointData;
+
+        public AcceptResponseStruct(FieldElement challengeId, EndpointDojoCallStruct endpointData)
+        {
+            this.challengeId = challengeId;
+            this.endpointData = endpointData;
+        }
+    }
+
+    public struct CommitMoveStruct
+    {
+        public FieldElement challengeId;
+        public FieldElement hash;
+        public EndpointDojoCallStruct endpointData;
+
+        public CommitMoveStruct(FieldElement challengeId, FieldElement hash, EndpointDojoCallStruct endpointData)
+        {
+            this.challengeId = challengeId;
+            this.hash = hash;
+            this.endpointData = endpointData;
+        }
+    }
+
+    public struct RevealMoveStruct
+    {
+        public FieldElement challengeId;
+        public BlobertUtils.Move move;
+        public FieldElement salt;
+        public EndpointDojoCallStruct endpointData;
+
+        public RevealMoveStruct(FieldElement challengeId, BlobertUtils.Move move, FieldElement salt, EndpointDojoCallStruct endpointData)
+        {
+            this.challengeId = challengeId;
+            this.move = move;
+            this.salt = salt;
+            this.endpointData = endpointData;
+        }
     }
 
 }

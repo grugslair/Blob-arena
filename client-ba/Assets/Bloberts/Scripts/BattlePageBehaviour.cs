@@ -1,7 +1,7 @@
 using DG.Tweening;
 using Dojo.Starknet;
-using DojoContractCommunication;
 using System;
+using System.Collections.Generic;
 using System.Numerics;
 using TMPro;
 using UnityEngine;
@@ -372,16 +372,23 @@ public class BattlePageBehaviour : Menu
             Debug.Log("Hash: " + pedersenHash.Hex());
             Debug.Log("\n\n");
 
-            var endpoint = new EndpointDojoCallStruct
-            {
-                account = DojoEntitiesStorage.currentAccount,
-                addressOfSystem = DojoEntitiesStorage.worldManagerData.challengeblobertContractAddress,
-                functionName = ChallengeActionsContract.FunctionNames.CommitMove.EnumToString(),
-            };
+            var endpoint = new DojoContractCommunication.EndpointDojoCallStruct(
+                addressOfSystem: DojoEntitiesStorage.worldManagerData.challengeblobertContractAddress,
+                functionName: ChallengeActionsContract.FunctionNames.CommitMove.EnumToString()
+            );
 
-            var structData = new ChallengeActionsContract.CommitMoveStruct(challengeId: DojoEntitiesStorage.selectedChallengeID, hash: pedersenHash);
+            var structData = new ChallengeActionsContract.CommitMoveStruct(
+                challengeId: DojoEntitiesStorage.selectedChallengeID, 
+                hash: pedersenHash,
+                endpointData: endpoint
+            );
 
-            var transaction = await ChallengeActionsContract.CommitMoveCall(structData, endpoint);
+            var calls = new List<object>();
+            calls.Add(structData);
+
+            var transaction = await DojoContractCommunication.InvokeContract(calls, gameObject.name, "OnChainTransactionCallbackFunctionC", account: DojoEntitiesStorage.currentAccount);
+
+            //var transaction = await ChallengeActionsContract.CommitMoveCall(structData, endpoint);
         }
         catch (Exception ex)
         {
@@ -390,6 +397,17 @@ public class BattlePageBehaviour : Menu
 
         UpdateFrontEndData();
     }
+
+    public void OnChainTransactionCallbackFunctionC(string transactionHash)
+    {
+        Debug.Log("Transaction hash callback: " + transactionHash);
+        //if (transactionHash == "User abort" || transactionHash == "Execute failed")
+        //{
+        //    UiEntitiesReferenceManager.notificationManager.CreateNotification("Selling Outpost was aborted", null, 5f);
+        //    return;
+        //}
+    }
+
     public async void CallToReveal()
     {
         try
@@ -424,16 +442,22 @@ public class BattlePageBehaviour : Menu
             Debug.Log("Secret number: " + secretNumber);
             Debug.Log("\n\n");
 
-            var endpoint = new EndpointDojoCallStruct
-            {
-                account = DojoEntitiesStorage.currentAccount,
-                addressOfSystem = DojoEntitiesStorage.worldManagerData.challengeblobertContractAddress,
-                functionName = ChallengeActionsContract.FunctionNames.RevealMove.EnumToString(),
-            };
+            var endpointData = new DojoContractCommunication.EndpointDojoCallStruct (
+                addressOfSystem: DojoEntitiesStorage.worldManagerData.challengeblobertContractAddress, 
+                functionName: ChallengeActionsContract.FunctionNames.RevealMove.EnumToString()
+            );
+            
+            var structData = new ChallengeActionsContract.RevealMoveStruct(
+                endpointData: endpointData,
+                challengeId: DojoEntitiesStorage.selectedChallengeID, 
+                move: lastMove, 
+                salt: new FieldElement(secretNumber.ToString("X"))
+            );
 
-            var structData = new ChallengeActionsContract.RevealMoveStruct(challengeId: DojoEntitiesStorage.selectedChallengeID, move: lastMove, salt: new FieldElement(secretNumber.ToString("X")));
+            var calls = new List<object>();
+            calls.Add(structData);
 
-            var transaction = await ChallengeActionsContract.RevealMoveCall(structData, endpoint);
+            var transaction = await DojoContractCommunication.InvokeContract(calls, gameObject.name, "OnChainTransactionCallbackFunctionR", account: DojoEntitiesStorage.currentAccount);
 
             UpdateFrontEndData();
         }
@@ -442,6 +466,12 @@ public class BattlePageBehaviour : Menu
             Debug.Log("everythign is broken");
         }
     }
+
+    public void OnChainTransactionCallbackFunctionR(string transactionHash)
+    {
+        Debug.Log("Transaction hash callback: " + transactionHash);
+    }
+
 
     public void UpdateFrontEndData()
     {
@@ -469,7 +499,6 @@ public class BattlePageBehaviour : Menu
             playerHpText.text = $"HP: {DojoEntitiesStorage.healthsCurrentGame.dojoB}";
         }
     }
-
     public void UpdateLastRound(LastRound lastRound)
     {
         Debug.Log("last round data");
@@ -533,7 +562,6 @@ public class BattlePageBehaviour : Menu
     {
         ClearDojoFightCache(true);
     }
-
     private void ClearDojoFightCache(bool loss)
     {
         DojoEntitiesStorage.healthsCurrentGame = null;
